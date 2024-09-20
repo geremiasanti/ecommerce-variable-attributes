@@ -1,0 +1,62 @@
+dependencies)
+	php (apache2),
+	composer,
+	drivers php-database
+		php8.3-mysql (apt repo)
+		php8.3-sqlite3 (apt repo)
+
+0)	composer create-project laravel/laravel test-breeze-inertia
+
+1)	database create + .env parameters + phpunit.xml uncomment sqlite db rows
+
+2)	composer require laravel/breeze --dev
+	php artisan breeze:install
+		breeze stack: 		inertia
+		optional features: 	none
+		testing framework:	PHPUnit
+
+3) 	php artisan migrate
+
+4)	npm install (+ npm run dev)
+
+5) 	composer require barryvdh/laravel-debugbar --dev
+
+--------------------------------------------------------------------------------
+
+development)
+	php artisan serve
+	npm run dev
+
+deploy)
+	composer install
+	npm run build [+ delete node_modules/, optional]
+
+	sudo chown -R www-data:www-data laravel-project/
+	sudo chmod -R 755 laravel-project/
+
+	copy laravel-project/ to /var/www/html/
+
+	sudo chown www-data:www-data /var/www/html/laravel-project/storage/logs/laravel.log
+	sudo chmod 755 /var/www/html/laravel-project/storage/logs/laravel.log
+
+	create another .conf file inside /etc/apache2/sites-available/
+	"""
+	<VirtualHost *:80>
+		ServerAdmin admin@example.com
+		ServerName laravel.example.com
+		DocumentRoot /var/www/html/laravel-project/public/
+
+		<Directory /var/www/html/laravel-project/public/>
+				AllowOverride All
+				Require all granted
+		</Directory>
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+	</VirtualHost>
+
+	"""
+	sudo a2dissite 000-default.conf
+	sudo a2enmod rewrite
+	sudo a2ensite laravel-project.conf
+	sudo systemctl reload apache2
