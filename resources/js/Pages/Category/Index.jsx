@@ -3,9 +3,7 @@ import { Head } from '@inertiajs/react';
 
 export default function Index() {
     return (
-        <AuthenticatedLayout
-            header={ <Header /> }
-        >
+        <AuthenticatedLayout header={<Header />}>
             <Head title="Categories" />
 
             <div className="py-12">
