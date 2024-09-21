@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Inertia\Inertia;
 
@@ -14,7 +15,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Category/Index');
+        $categoriesQuery = Category::query();
+        $categoriesPaginated = $categoriesQuery->paginate(10)->onEachSide(5);
+
+        return Inertia::render('Category/Index', [
+            'categoriesPaginated' => CategoryResource::collection($categoriesPaginated)
+        ]);
     }
 
     /**
