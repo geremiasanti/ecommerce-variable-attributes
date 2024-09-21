@@ -1,14 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Edit() {
+export default function Index() {
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Categories
-                </h2>
-            }
+            header={ <Header /> }
         >
             <Head title="Categories" />
 
@@ -19,5 +15,13 @@ export default function Edit() {
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+function Header() {
+    return (
+        <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+            Categories
+        </h2>
     );
 }
