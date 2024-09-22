@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categoriesQuery = Category::query();
-        $categoriesPaginated = $categoriesQuery->paginate(10);
+        $categoriesPaginated = $categoriesQuery->paginate(5);
 
         return Inertia::render('Category/Index', [
             'categoriesPaginated' => CategoryResource::collection($categoriesPaginated)

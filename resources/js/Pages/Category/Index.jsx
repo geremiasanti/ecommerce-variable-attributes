@@ -36,9 +36,9 @@ function CategoryRow({category}) {
     // todo make it expandable
     // todo add image
     return (
-        <li className="m-2 p-2 bg-white shadow sm:rounded-lg">
-            <img src={category.image_path} />
-            {category.name}
+        <li className="flex m-2 p-2 bg-white shadow rounded-lg">
+            <img className="h-20 w-20 rounded-full mx-5 my-2" src={category.image_path} />
+            <span className="content-center  text-3xl ">{category.name}</span>
         </li>
     );
 }
