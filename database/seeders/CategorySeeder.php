@@ -32,7 +32,8 @@ class CategorySeeder extends Seeder
     {
         foreach(self::NAMES as $name) {
             Category::create([
-                'name' => $name
+                'name' => $name,
+                'image_path' => fake()->imageUrl(100, 100, null, false, $name)
             ]);
         }
     }

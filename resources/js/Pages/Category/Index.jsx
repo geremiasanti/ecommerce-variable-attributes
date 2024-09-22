@@ -37,6 +37,7 @@ function CategoryRow({category}) {
     // todo add image
     return (
         <li className="m-2 p-2 bg-white shadow sm:rounded-lg">
+            <img src={category.image_path} />
             {category.name}
         </li>
     );
