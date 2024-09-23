@@ -17,9 +17,9 @@ class CategoryController extends Controller
     {
         $categoriesQuery = Category::query();
 
-        $search = request('search');
-        if($search) {
-            $categoriesQuery->where('name', 'like', "%$search%");
+        $filter = request('filter');
+        if($filter) {
+            $categoriesQuery->where('name', 'like', "%$filter%");
         }
 
         $categoriesQuery->orderBy('name');

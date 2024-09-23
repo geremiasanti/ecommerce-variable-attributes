@@ -6,12 +6,12 @@ import { Head, router } from '@inertiajs/react';
 export default function Index({categoriesPaginated, queryParams}) {
     queryParams ||= {};
 
-    const searchInputChanged = (value) => {
+    const filterInputChanged = (value) => {
         if(value) {
             console.log(value);
-            queryParams['search'] = value;
+            queryParams['filter'] = value;
         } else {
-            delete queryParams['search'];
+            delete queryParams['filter'];
         }
 
         router.get(route('categories.index'), queryParams, {
@@ -33,8 +33,8 @@ export default function Index({categoriesPaginated, queryParams}) {
                         <nav className="text-center">
                             <TextInput
                                 placeholder="Filter..."
-                                defaultValue={queryParams.search}
-                                onKeyUp={e => searchInputChanged(e.target.value)}
+                                defaultValue={queryParams.filter}
+                                onKeyUp={e => filterInputChanged(e.target.value)}
                                 onKeyPress={e => e.key === 'Enter' ? onEnter() : undefined}
                             />
                         </nav>

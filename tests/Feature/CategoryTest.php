@@ -27,27 +27,27 @@ class CategoryTest extends TestCase
             );
     }
 
-    public function test_categories_index_search_returns_query_params(): void
+    public function test_categories_index_filter_returns_query_params(): void
     {
-        $searchString = 'Lorem ipsum dolor sit amet.';
+        $filterString = 'Lorem ipsum dolor sit amet.';
         $user = User::factory()->create();
         $response = $this->actingAs($user)
             ->get(route('categories.index', [
-                'search' => $searchString
+                'filter' => $filterString
             ]));
 
         $response->assertOk()
             ->assertInertia(fn(AssertableInertia $page) =>
                 $page->component("Category/Index")
                     ->has('queryParams', fn(AssertableInertia $queryParams) =>
-                        $queryParams->where('search', $searchString)
+                        $queryParams->where('filter', $filterString)
                     )
             );
     }
 
-    public function test_categories_index_search_returns_correct_amount_of_results(): void
+    public function test_categories_index_filter_returns_correct_amount_of_results(): void
     {
-        $searchString = 'Ipsum';
+        $filterString = 'Ipsum';
         Category::create([ 'name' => 'Lorem IPSUM dolor sit amet.' ]);
         Category::create([ 'name' => 'ipsum amet' ]);
         Category::create([ 'name' => 'something else' ]);
@@ -55,7 +55,7 @@ class CategoryTest extends TestCase
         $user = User::factory()->create();
         $response = $this->actingAs($user)
             ->get(route('categories.index', [
-                'search' => $searchString
+                'filter' => $filterString
             ]));
 
         $response->assertOk()
