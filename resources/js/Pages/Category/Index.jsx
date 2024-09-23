@@ -37,8 +37,8 @@ function CategoryRow({category}) {
     // todo add image
     return (
         <li className="flex m-2 p-2 bg-white shadow rounded-lg">
-            <img className="h-20 w-20 rounded-full mx-5 my-2" src={category.image_path} />
-            <span className="content-center  text-3xl ">{category.name}</span>
+            <img className="h-20 w-20 rounded-l-lg m-2" src={category.image_path} />
+            <span className="content-center text-3xl m-2 ">{category.name}</span>
         </li>
     );
 }

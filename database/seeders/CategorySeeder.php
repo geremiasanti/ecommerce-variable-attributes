@@ -33,7 +33,11 @@ class CategorySeeder extends Seeder
         foreach(self::NAMES as $name) {
             Category::create([
                 'name' => $name,
-                'image_path' => fake()->imageUrl(100, 100, null, false, $name)
+                'image_path' => str_replace(
+                    'CCCCCC',
+                    Category::IMAGE_BG_PALETTE[array_rand(Category::IMAGE_BG_PALETTE)],
+                    fake()->imageUrl(100, 100, null, false, $name, true)
+                )
             ]);
         }
     }
