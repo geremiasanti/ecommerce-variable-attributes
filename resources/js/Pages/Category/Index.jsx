@@ -1,16 +1,45 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
-import { Head } from '@inertiajs/react';
+import TextInput from '@/Components/TextInput';
+import { Head, router } from '@inertiajs/react';
 
-export default function Index({categoriesPaginated}) {
+export default function Index({categoriesPaginated, queryParams}) {
+    queryParams ||= {};
+
+    const searchInputChanged = (value) => {
+        if(value) {
+            console.log(value);
+            queryParams['search'] = value;
+        } else {
+            delete queryParams['search'];
+        }
+
+        router.get(route('categories.index'), queryParams, {
+            preserveState: true,
+            replace: true
+        });
+    }
+
+    const onEnter = () => {
+        console.log('invio')
+    }
+
     return (
         <AuthenticatedLayout header={<Header />}>
             <Head title="Categories" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    <CategoriesList categories={categoriesPaginated.data} />
-                    <Pagination links={categoriesPaginated.meta.links} />
+                        <nav className="text-center">
+                            <TextInput
+                                placeholder="Search..."
+                                defaultValue={queryParams.search}
+                                onKeyUp={e => searchInputChanged(e.target.value)}
+                                onKeyPress={e => e.key === 'Enter' ? onEnter() : undefined}
+                            />
+                        </nav>
+                        <CategoriesList categories={categoriesPaginated.data} />
+                        <Pagination links={categoriesPaginated.meta.links} />
                 </div>
             </div>
         </AuthenticatedLayout>

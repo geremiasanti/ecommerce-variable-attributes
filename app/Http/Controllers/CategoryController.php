@@ -16,10 +16,17 @@ class CategoryController extends Controller
     public function index()
     {
         $categoriesQuery = Category::query();
+
+        $search = request('search');
+        if($search) {
+            self::addSearchClauses($categoriesQuery, $search);
+        }
+
         $categoriesPaginated = $categoriesQuery->paginate(5);
 
         return Inertia::render('Category/Index', [
-            'categoriesPaginated' => CategoryResource::collection($categoriesPaginated)
+            'categoriesPaginated' => CategoryResource::collection($categoriesPaginated),
+            'queryParams' => request()->query() ?: null
         ]);
     }
 
@@ -69,5 +76,19 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+    }
+
+    private static function addSearchClauses($query, $searchString) {
+        $words = explode(' ', $searchString);
+
+        $isFirstWhere = true;
+        foreach($words as $word) {
+            if($isFirstWhere) {
+                $query->where('name', 'like', "%$word%");
+                $isFirstWhere = false;
+            } else {
+                $query->orWhere('name', 'like', "%$word%");
+            }
+        }
     }
 }
