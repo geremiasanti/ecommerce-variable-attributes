@@ -47,8 +47,8 @@ class CategoryTest extends TestCase
 
     public function test_categories_index_search_returns_correct_amount_of_results(): void
     {
-        $searchString = 'Lorem ipsum dolor sit amet.';
-        Category::create([ 'name' => 'ipsum' ]);
+        $searchString = 'Ipsum';
+        Category::create([ 'name' => 'Lorem IPSUM dolor sit amet.' ]);
         Category::create([ 'name' => 'ipsum amet' ]);
         Category::create([ 'name' => 'something else' ]);
 
