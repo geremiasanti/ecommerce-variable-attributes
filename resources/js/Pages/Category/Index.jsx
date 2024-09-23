@@ -32,7 +32,7 @@ export default function Index({categoriesPaginated, queryParams}) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                         <nav className="text-center">
                             <TextInput
-                                placeholder="Search..."
+                                placeholder="Filter..."
                                 defaultValue={queryParams.search}
                                 onKeyUp={e => searchInputChanged(e.target.value)}
                                 onKeyPress={e => e.key === 'Enter' ? onEnter() : undefined}

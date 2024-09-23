@@ -19,7 +19,7 @@ class CategoryController extends Controller
 
         $search = request('search');
         if($search) {
-            self::addSearchClauses($categoriesQuery, $search);
+            $categoriesQuery->where('name', 'like', "%$search%");
         }
 
         $categoriesQuery->orderBy('name');
@@ -77,19 +77,5 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
-    }
-
-    private static function addSearchClauses($query, $searchString) {
-        $words = explode(' ', $searchString);
-
-        $isFirstWhere = true;
-        foreach($words as $word) {
-            if($isFirstWhere) {
-                $query->where('name', 'like', "%$word%");
-                $isFirstWhere = false;
-            } else {
-                $query->orWhere('name', 'like', "%$word%");
-            }
-        }
     }
 }
