@@ -17,7 +17,7 @@ export default function Index({categoriesPaginated, queryParams}) {
 
         router.get(route('categories.index'), queryParams, {
             preserveScroll: true,
-            preserveState: false,
+            preserveState: true,
             replace: true
         });
     }
