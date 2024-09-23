@@ -6,10 +6,9 @@ export default function Pagination({links}) {
             {links.map(link => <Link
                 key={link.label}
                 href={link.url || ""}
-                preserveScroll
-                preserveState
-                replace
                 dangerouslySetInnerHTML={{__html: link.label}}
+                preserveScroll
+                replace
                 className={
                     "inline-block py-2 px-3 rounded-lg text-gray-800 text-xs " +
                     (link.active ? "bg-white " : " ") +

@@ -23,7 +23,7 @@ class CategoryController extends Controller
         }
 
         $categoriesQuery->orderBy('name');
-        $categoriesPaginated = $categoriesQuery->paginate(5);
+        $categoriesPaginated = $categoriesQuery->paginate(7)->withQueryString();
 
         return Inertia::render('Category/Index', [
             'categoriesPaginated' => CategoryResource::collection($categoriesPaginated),
