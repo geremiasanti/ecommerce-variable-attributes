@@ -20,9 +20,6 @@ export default function Index({categoriesPaginated, queryParams}) {
         });
     }
 
-    const onEnter = () => {
-    }
-
     return (
         <AuthenticatedLayout header={<Header />}>
             <Head title="Categories" />
@@ -34,7 +31,6 @@ export default function Index({categoriesPaginated, queryParams}) {
                                 placeholder="Filter..."
                                 defaultValue={queryParams.filter}
                                 onKeyUp={e => filterInputChanged(e.target.value)}
-                                onKeyPress={e => e.key === 'Enter' ? onEnter() : undefined}
                             />
                         </nav>
                         <CategoriesList categories={categoriesPaginated.data} />
