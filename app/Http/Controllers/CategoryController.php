@@ -22,6 +22,7 @@ class CategoryController extends Controller
             self::addSearchClauses($categoriesQuery, $search);
         }
 
+        $categoriesQuery->orderBy('name');
         $categoriesPaginated = $categoriesQuery->paginate(5);
 
         return Inertia::render('Category/Index', [
