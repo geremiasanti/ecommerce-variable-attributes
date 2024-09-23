@@ -9,7 +9,9 @@ class Category extends Model
 {
     use HasFactory;
 
-    const IMAGE_BG_PALETTE = [
+    protected $fillable = ['name', 'image_path'];
+
+    public const IMAGE_BG_PALETTE = [
         "03071e",
         "370617",
         "6a040f",
