@@ -27,7 +27,25 @@ class CategoryTest extends TestCase
             );
     }
 
-    public function test_categories_index_search_is_working(): void
+    public function test_categories_index_search_returns_query_params(): void
+    {
+        $searchString = 'Lorem ipsum dolor sit amet.';
+        $user = User::factory()->create();
+        $response = $this->actingAs($user)
+            ->get(route('categories.index', [
+                'search' => $searchString
+            ]));
+
+        $response->assertOk()
+            ->assertInertia(fn(AssertableInertia $page) =>
+                $page->component("Category/Index")
+                    ->has('queryParams', fn(AssertableInertia $queryParams) =>
+                        $queryParams->where('search', $searchString)
+                    )
+            );
+    }
+
+    public function test_categories_index_search_returns_correct_amount_of_results(): void
     {
         $searchString = 'Lorem ipsum dolor sit amet.';
         Category::create([ 'name' => 'ipsum' ]);
@@ -44,9 +62,6 @@ class CategoryTest extends TestCase
             ->assertInertia(fn(AssertableInertia $page) =>
                 $page->component("Category/Index")
                     ->has('categoriesPaginated.data', 2)
-                    ->has('queryParams', fn(AssertableInertia $queryParams) =>
-                        $queryParams->where('search', $searchString)
-                    )
             );
     }
 }
