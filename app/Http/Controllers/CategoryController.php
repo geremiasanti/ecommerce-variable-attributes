@@ -26,7 +26,8 @@ class CategoryController extends Controller
         $categoriesQuery->orderBy('name');
         $categoriesPaginated = $categoriesQuery->paginate(7)->withQueryString();
 
-        return Inertia::render('Category/Index', [
+        return inertia('Category/Index', [
+            'placeHolderUri' => Storage::url('placeholder.png'),
             'categoriesPaginated' => CategoryResource::collection($categoriesPaginated),
             'queryParams' => request()->query() ?: null,
             'success' => session('success')
@@ -72,7 +73,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return inertia('Category/Edit', [
+            'category' => new CategoryResource($category),
+        ]);
     }
 
     /**
@@ -80,7 +83,24 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        $previousImagePath = $category->image_path;
+
+        $data = $request->validated();
+        $category->update($data);
+
+        $image = empty($data['image']) ? null : $data['image'];
+        if($image) {
+            if(!empty($previousImagePath) && Storage::disk('public')->exists($previousImagePath)) {
+                Storage::disk('public')->delete($previousImagePath);
+            }
+
+            $imagePath = $image->store('categories', 'public');
+            $category->image_path = $imagePath;
+            $category->save();
+        };
+
+        return to_route('categories.index')
+            ->with('success', "Category \"$category->name\" updated");
     }
 
     /**
@@ -97,6 +117,6 @@ class CategoryController extends Controller
         }
 
         return to_route('categories.index')
-            ->with('success', "Category \"$categoryName\" was deleted");
+            ->with('success', "Category \"$categoryName\" deleted");
     }
 }
