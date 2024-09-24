@@ -28,11 +28,13 @@ class CategoryAttributeSeeder extends Seeder
                 'type_id' => $types['Decimal'],
                 'unit' => "Pollici"
             ],
+            /*
             [
                 'name' => 'Tipologia',
                 'category_id' => $computersCategoryId,
                 'type_id' => $types['Options']
             ],
+            */
             [
                 'name' => 'Processore',
                 'category_id' => $computersCategoryId,

@@ -29,12 +29,12 @@ export default function Edit({category}) {
         >
             <Head title={category.data.name} />
 
-            <div className="py-12">
+            <div className="py-12 text-gray-800">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <form
                         onSubmit={onSubmit}
                     >
-                        <div className="p-4 sm:p-8 bg-white shadow-xl sm:rounded-lg">
+                        <div className="p-4 sm:p-8 mb-2 bg-white shadow-xl sm:rounded-lg">
                             <div className="m-2">
                                 <InputLabel htmlFor="name" value="Name" />
 
@@ -79,9 +79,65 @@ export default function Edit({category}) {
                                 <PrimaryButton className="mt-4">Save changes</PrimaryButton>
                             </div>
                         </div>
+                        <AttributesList attributes={category.data.attributes} />
                     </form>
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+function AttributesList({attributes}) {
+    const attributeRows = attributes.map((attribute) =>
+        <AttributeRow key={attribute.id} attribute={attribute} />
+    );
+
+    return (
+        <table className="w-full text-sm text-left bg-white shadow-xl rounded-lg">
+            <thead className="text-xs uppercase">
+                <tr className="text-nowrap">
+                    <th className="px-3 py-3">type</th>
+                    <th className="px-3 py-3">name</th>
+                    <th className="px-3 py-3">unit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {attributeRows}
+            </tbody>
+        </table>
+    );
+}
+
+function AttributeRow({attribute}) {
+    return (
+        <tr
+            className="bg-white border-b"
+        >
+            <td className="px-3 py-2">
+                {attribute.type.name}
+            </td>
+            <td className="px-3 py-2">
+                <TextInput
+                    id="name"
+                    value={attribute.name}
+                    //onChange={(e) => setData('name', e.target.value)}
+                    required
+                    className="my-1 block w-full"
+                />
+            </td>
+            <td className="px-3 py-2">
+                {
+                    attribute.type.can_have_unit
+                        ? <TextInput
+                            id="name"
+                            value={attribute.unit}
+                            //onChange={(e) => setData('name', e.target.value)}
+                            required
+                            className="my-1 block w-full"
+                        />
+                        : ' '
+                }
+            </td>
+        </tr>
     );
 }

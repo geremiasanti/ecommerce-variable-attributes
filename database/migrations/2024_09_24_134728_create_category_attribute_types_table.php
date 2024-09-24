@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('category_attribute_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->boolean('can_have_unit');
             $table->timestamps();
         });
     }
