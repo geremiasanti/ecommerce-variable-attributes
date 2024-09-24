@@ -13,7 +13,7 @@ export default function Index({categoriesPaginated, queryParams, success}) {
             delete queryParams['filter'];
         }
 
-       queryParams['page'] = 1;
+        queryParams['page'] = 1;
 
         router.get(route('categories.index'), queryParams, {
             preserveScroll: true,
@@ -22,21 +22,37 @@ export default function Index({categoriesPaginated, queryParams, success}) {
         });
     }
 
+    const deleteCategory = (category) => {
+        if(!window.confirm("Delete category? This operation cannot be undone."))
+            return
+
+        router.delete(route('categories.destroy', category.id));
+    }
+
+
     return (
         <AuthenticatedLayout header={<Header />}>
             <Head title="Categories" />
 
             <div className="py-6 text-gray-800">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                        <nav className="text-center">
-                            <TextInput
-                                placeholder="Filter..."
-                                defaultValue={queryParams.filter}
-                                onKeyUp={e => filterInputChanged(e.target.value)}
-                            />
-                        </nav>
-                        <CategoriesList categories={categoriesPaginated.data} />
-                        <Pagination links={categoriesPaginated.meta.links} />
+                    {success && (
+                        <div className="bg-emerald-500 py-2 px-4 text-white rounded mb-4">
+                            {success}
+                        </div>
+                    )}
+                    <nav className="text-center">
+                        <TextInput
+                            placeholder="Filter..."
+                            defaultValue={queryParams.filter}
+                            onKeyUp={e => filterInputChanged(e.target.value)}
+                        />
+                    </nav>
+                    <CategoriesList
+                        categories={categoriesPaginated.data}
+                        onCategoryDelete={deleteCategory}
+                    />
+                    <Pagination links={categoriesPaginated.meta.links} />
                 </div>
             </div>
         </AuthenticatedLayout>
@@ -62,18 +78,22 @@ function Header() {
     );
 }
 
-function CategoriesList({categories}) {
+function CategoriesList({categories, onCategoryDelete}) {
     if(categories.length == 0) {
         return <div className="text-xl text-gray-500 text-center p-6">No results found</div>;
     }
 
     const categoriesRows = categories.map(category =>
-        <CategoryRow key={category.id} category={category} />
+        <CategoryRow
+            key={category.id}
+            category={category}
+            onCategoryDelete={onCategoryDelete}
+        />
     )
     return <ul>{categoriesRows}</ul>;
 }
 
-function CategoryRow({category}) {
+function CategoryRow({category, onCategoryDelete}) {
     return (
         <li className="h-10 md:h-20 flex bg-white shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
             <img className="w-10 md:w-20 rounded-l-lg" src={category.image_path} />
@@ -84,12 +104,15 @@ function CategoryRow({category}) {
                 </svg>
               <span className="ml-2 hidden md:flex">Edit</span>
             </Link>
-            <Link className="text-white bg-red-600 md:bg-red-500 hover:bg-red-600 text-font-bold rounded inline-flex items-center md:my-2 p-2">
+            <button
+                className="text-white bg-red-600 md:bg-red-500 hover:bg-red-600 text-font-bold rounded inline-flex items-center md:my-2 p-2"
+                onClick={() => onCategoryDelete(category)}
+            >
                 <svg className="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
                 </svg>
               <span className="ml-2 hidden md:flex">Delete</span>
-            </Link>
+            </button>
         </li>
     );
 }
