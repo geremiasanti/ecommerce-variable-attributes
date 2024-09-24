@@ -87,7 +87,6 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        dd($request);
         $previousImagePath = $category->image_path;
 
         $data = $request->validated();

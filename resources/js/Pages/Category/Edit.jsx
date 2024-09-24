@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 
 export default function Edit({category}) {
     console.log(category);
@@ -23,9 +23,29 @@ export default function Edit({category}) {
         });
     }
 
+    const deleteCategory = (category) => {
+        if(!window.confirm("Delete category? This operation cannot be undone."))
+            return
+
+        router.delete(route('categories.destroy', category.data.id));
+    }
+
     return (
         <AuthenticatedLayout
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Edit category</h2>}
+            header={
+                <div className="flex items-center">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">Edit category</h2>
+                    <button
+                        onClick={() => deleteCategory(category)}
+                        className="text-white bg-red-600 md:bg-red-500 hover:bg-red-600 text-font-bold p-3 rounded inline-flex items-center ml-auto"
+                    >
+                        <svg className="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                        </svg>
+                      <span className="ml-2 hidden md:flex">Delete</span>
+                    </button>
+                </div>
+            }
         >
             <Head title={category.data.name} />
 
@@ -95,7 +115,7 @@ function AttributesList({attributes}) {
     return (
         <table className="w-full text-sm text-left bg-white shadow-xl rounded-lg">
             <thead className="text-xs uppercase">
-                <tr className="text-nowrap">
+                <tr className="text-nowrap border-b">
                     <th className="px-3 py-3">type</th>
                     <th className="px-3 py-3">name</th>
                     <th className="px-3 py-3">unit</th>
