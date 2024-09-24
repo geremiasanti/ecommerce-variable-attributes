@@ -27,7 +27,8 @@ class CategoryController extends Controller
 
         return Inertia::render('Category/Index', [
             'categoriesPaginated' => CategoryResource::collection($categoriesPaginated),
-            'queryParams' => request()->query() ?: null
+            'queryParams' => request()->query() ?: null,
+            'success' => session('success')
         ]);
     }
 
@@ -36,7 +37,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Category/Create');
     }
 
     /**
@@ -44,7 +45,18 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        $data = $request->validated();
+        $categoryCreated = Category::create($data);
+
+        $image = empty($data['image']) ? null : $data['image'];
+        if($image) {
+            $imagePath = $image->store('categories', 'public');
+            $categoryCreated->image_path = $imagePath;
+            $categoryCreated->save();
+        };
+
+        return to_route('categories.index')
+            ->with('success', 'New category created');
     }
 
     /**

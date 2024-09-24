@@ -4,6 +4,7 @@ dependencies)
 	drivers php-database
 		php8.3-mysql (apt repo)
 		php8.3-sqlite3 (apt repo)
+		php8.3-gd (apt repo)
 
 0)	composer create-project laravel/laravel test-breeze-inertia
 
@@ -16,6 +17,7 @@ dependencies)
 		testing framework:	PHPUnit
 
 3) 	php artisan migrate
+    php artisan storage:link
 
 4)	npm install (+ npm run dev)
 
