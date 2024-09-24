@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\CategoryAttributeResource;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use Inertia\Inertia;
@@ -75,6 +76,9 @@ class CategoryController extends Controller
     {
         return inertia('Category/Edit', [
             'category' => new CategoryResource($category),
+            'attributes' => CategoryAttributeResource::collection(
+                $category->attributes
+            )
         ]);
     }
 
@@ -83,6 +87,7 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        dd($request);
         $previousImagePath = $category->image_path;
 
         $data = $request->validated();
