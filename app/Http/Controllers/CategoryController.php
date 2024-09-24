@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategoryAttributeResource;
+use App\Models\CategoryAttributeType;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use Inertia\Inertia;
@@ -78,7 +79,8 @@ class CategoryController extends Controller
             'category' => new CategoryResource($category),
             'attributes' => CategoryAttributeResource::collection(
                 $category->attributes
-            )
+            ),
+            'attributeTypeOptions' => CategoryAttributeType::getArray()
         ]);
     }
 

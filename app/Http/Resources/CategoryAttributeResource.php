@@ -17,7 +17,7 @@ class CategoryAttributeResource extends JsonResource
         return [
             'id' => $this->id,
             'category_id' => $this->category_id,
-            'type' => $this->type,
+            'type' => new CategoryAttributeTypeResource($this->type),
             'name' => $this->name,
             'unit' => $this->unit
         ];
