@@ -24,7 +24,7 @@ class CategoryResource extends JsonResource
 
     private static function handleImagesAndPlaceholders($image_path) {
         if(!$image_path) {
-            return Storage::url('placeholder.png');
+            return '';
         }
 
         if(str_contains($image_path, 'https://via.placeholder.com/')) {
