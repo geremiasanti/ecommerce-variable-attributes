@@ -127,4 +127,17 @@ class CategoryTest extends TestCase
 
         $this->assertSame(Category::count(), 0);
     }
+
+    public function test_category_can_be_deleted() {
+        $createdCategory = Category::factory()->create();
+        $this->assertSame(Category::count(), 1);
+
+        $user = User::factory()->create();
+        $response = $this->actingAs($user)
+            ->delete(route('categories.destroy', $createdCategory->id));
+        $this->assertSame(Category::count(), 0);
+
+        $response
+            ->assertRedirect(route('categories.index'));
+    }
 }
