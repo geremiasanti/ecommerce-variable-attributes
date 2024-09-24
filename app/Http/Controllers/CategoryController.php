@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use Inertia\Inertia;
 
@@ -56,8 +57,7 @@ class CategoryController extends Controller
         };
 
         return to_route('categories.index')
-            ->with('success', "New category \"$categoryCreated->name\" created");
-    }
+            ->with('success', "New category \"$categoryCreated->name\" created"); }
 
     /**
      * Display the specified resource.
@@ -89,7 +89,13 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $categoryName = $category->name;
+        $categoryImagePath = $category->image_path;
         $category->delete();
+
+        if(!empty($categoryImagePath) && Storage::disk('public')->exists($categoryImagePath)) {
+            Storage::disk('public')->delete($categoryImagePath);
+        }
+
         return to_route('categories.index')
             ->with('success', "Category \"$categoryName\" was deleted");
     }
