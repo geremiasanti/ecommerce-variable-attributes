@@ -4,14 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryAttributeRequest;
 use App\Models\CategoryAttribute;
-use App\Models\CategoryAttributeType;
+use App\Models\ProductAttribute;
 
 class CategoryAttributeController extends Controller
 {
     public function store(StoreCategoryAttributeRequest $request)
     {
         $validated = $request->validated();
-        CategoryAttribute::create($validated);
+        $createdAttribute = CategoryAttribute::create($validated);
+
+        foreach($createdAttribute->category->products as $product) {
+            ProductAttribute::create([
+                'product_id' => $product->id,
+                'category_attribute_id' => $createdAttribute->id
+            ]);
+        }
 
         return back();
     }

@@ -213,25 +213,50 @@ function AttributeRow({attribute}) {
 function UpdateAttributeValueForm({attribute}) {
     const {data, setData, post, errors, reset} = useForm({
         value: attribute.value || '',
+        type: attribute.type.name,
         _method: 'PUT'
     })
     const onSubmit = (e) => {
         e.preventDefault();
+
+        if(data.type === 'Integer') {
+            setData('value', parseInt(data.value));
+        }
+
         post(route('productattributes.update', attribute.id), {
             preserveScroll: true
         });
     }
 
-    const input = <>
+    let input =
         <TextInput
             id="value"
             value={data.value}
             onChange={(e) => setData('value', e.target.value)}
-            required
             className="my-1 block w-full"
         />
-        <InputError className="mt-2" message={errors.value} />
-    </>;
+    if(attribute.type.name === 'Integer') {
+        input =
+            <TextInput
+                id="value"
+                type="number"
+                step="1"
+                value={data.value}
+                onChange={(e) => setData('value', e.target.value)}
+                className="my-1 block w-full"
+            />
+    }
+    if(attribute.type.name === 'Decimal') {
+        input =
+            <TextInput
+                id="value"
+                type="number"
+                step=".01"
+                value={data.value}
+                onChange={(e) => setData('value', e.target.value)}
+                className="my-1 block w-full"
+            />
+    }
 
     return <form onSubmit={onSubmit}>
         {input}
