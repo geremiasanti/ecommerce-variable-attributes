@@ -31,4 +31,9 @@ class Category extends Model
         return $this->hasMany(CategoryAttribute::class)
             ->orderBy('created_at', 'desc');
     }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }

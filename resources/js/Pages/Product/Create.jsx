@@ -21,6 +21,7 @@ export default function Create({categories}) {
             forceFormData: true
         });
     }
+    console.log(errors);
 
     const categoryOptions = [
         <option key="empty" value="" data-unit="0"></option>,
@@ -49,7 +50,7 @@ export default function Create({categories}) {
                             <SelectInput
                                 name=""
                                 id="category_id"
-                                value={data.type_id}
+                                value={data.category_id}
                                 onChange={(e) => setData('category_id', e.target.value)}
                                 className="my-1 block w-full"
                                 required
@@ -87,7 +88,7 @@ export default function Create({categories}) {
                                 className="my-1 block w-full"
                             />
 
-                            <InputError className="mt-2" message={errors.name} />
+                            <InputError className="mt-2" message={errors.price} />
                         </div>
                         <div className="m-2">
                             <InputLabel htmlFor="image" value="Image" />

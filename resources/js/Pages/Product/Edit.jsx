@@ -10,8 +10,10 @@ import { Head, useForm, router } from '@inertiajs/react';
 export default function Edit({product, categories}) {
     console.log(product);
     const {data, setData, post, errors, reset} = useForm({
+        category_id: product.data.category.id,
         name: product.data.name,
         image: '',
+        price: product.data.price,
         image_path: product.data.image_path || '',
         attributes: product.data.attributes,
         _method: 'PUT'
@@ -30,6 +32,15 @@ export default function Edit({product, categories}) {
 
         router.delete(route('products.destroy', product.data.id));
     }
+
+    const categoryOptions = [
+        <option key="empty" value="" data-unit="0"></option>,
+        ...categories.data.map(category =>
+            <option key={category.id} value={category.id} data-unit={category.can_have_unit}>
+                {category.name}
+            </option>
+        )
+    ];
 
     return (
         <AuthenticatedLayout
@@ -58,6 +69,22 @@ export default function Edit({product, categories}) {
                             onSubmit={onSubmit}
                         >
                             <div className="m-2">
+                                <InputLabel htmlFor="category_id" value="Category" />
+
+                                <SelectInput
+                                    name=""
+                                    id="category_id"
+                                    value={data.category_id}
+                                    onChange={(e) => setData('category_id', e.target.value)}
+                                    className="my-1 block w-full"
+                                    required
+                                >
+                                    {categoryOptions}
+                                </SelectInput>
+
+                                <InputError className="mt-2" message={errors.category_id} />
+                            </div>
+                            <div className="m-2">
                                 <InputLabel htmlFor="name" value="Name" />
 
                                 <TextInput
@@ -69,6 +96,22 @@ export default function Edit({product, categories}) {
                                 />
 
                                 <InputError className="mt-2" message={errors.name} />
+                            </div>
+                            <div className="m-2">
+                                <InputLabel htmlFor="price" value="Price (EUR)" />
+
+                                <TextInput
+                                    id="price"
+                                    type="number"
+                                    step=".01"
+                                    value={data.price}
+                                    onChange={(e) => setData('price', e.target.value)}
+                                    required
+                                    isFocused
+                                    className="my-1 block w-full"
+                                />
+
+                                <InputError className="mt-2" message={errors.price} />
                             </div>
                             <div className="m-2">
                                 <InputLabel htmlFor="image" value="Replace image" />
@@ -154,8 +197,7 @@ function AttributeRow({attribute}) {
 
         router.delete(route('productattributes.destroy', attribute.id), {
             preserveState: true,
-            preserveScroll: true,
-            preserveScroll: true,
+            preserveScroll: true
         });
     }
 

@@ -23,7 +23,7 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'category_id' => ['required'],
-            'name' => ['required', 'unique:categories', 'max:64'],
+            'name' => ['required', 'max:64'],
             'price' => ['required', 'decimal:0,2'],
             'image' => ['nullable', 'image']
         ];

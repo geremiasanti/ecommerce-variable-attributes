@@ -13,6 +13,7 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'price' => $this->price,
             'image_path' => self::handleImagesAndPlaceholders($this->image_path),
             'category' => new CategoryResource($this->category),
             'attributes' => ProductAttributeResource::collection($this->whenLoaded('attributes'))

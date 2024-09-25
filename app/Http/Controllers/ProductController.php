@@ -90,7 +90,24 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        $previousImagePath = $product->image_path;
+
+        $data = $request->validated();
+        $product->update($data);
+
+        $image = empty($data['image']) ? null : $data['image'];
+        if($image) {
+            if(!empty($previousImagePath) && Storage::disk('public')->exists($previousImagePath)) {
+                Storage::disk('public')->delete($previousImagePath);
+            }
+
+            $imagePath = $image->store('products', 'public');
+            $product->image_path = $imagePath;
+            $product->save();
+        };
+
+        return to_route('products.index')
+            ->with('success', "Product \"$product->name\" updated");
     }
 
     /**
@@ -98,6 +115,15 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $productName = $product->name;
+        $productImagePath = $product->image_path;
+        $product->delete();
+
+        if(!empty($productImagePath) && Storage::disk('public')->exists($productImagePath)) {
+            Storage::disk('public')->delete($productImagePath);
+        }
+
+        return to_route('products.index')
+            ->with('success', "Product \"$productName\" deleted");
     }
 }

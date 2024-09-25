@@ -119,6 +119,10 @@ class CategoryController extends Controller
     {
         $categoryName = $category->name;
         $categoryImagePath = $category->image_path;
+
+        foreach($category->products as $product) {
+            $product->delete();
+        }
         $category->delete();
 
         if(!empty($categoryImagePath) && Storage::disk('public')->exists($categoryImagePath)) {
