@@ -271,8 +271,8 @@ function CreateAttributeRow({typeOptions, categoryId}) {
                     className="my-1 block w-full hidden"
                 />
             </div>
-            <div className="table-cell text-center">
-                <PrimaryButton>Save</PrimaryButton>
+            <div className="table-cell align-middle">
+                <PrimaryButton className="">Save</PrimaryButton>
             </div>
         </form>
     );

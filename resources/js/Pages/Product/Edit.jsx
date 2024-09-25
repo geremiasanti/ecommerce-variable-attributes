@@ -8,7 +8,6 @@ import TextInput from '@/Components/TextInput';
 import { Head, useForm, router } from '@inertiajs/react';
 
 export default function Edit({product, categories}) {
-    console.log(product);
     const {data, setData, post, errors, reset} = useForm({
         category_id: product.data.category.id,
         name: product.data.name,
@@ -107,7 +106,6 @@ export default function Edit({product, categories}) {
                                     value={data.price}
                                     onChange={(e) => setData('price', e.target.value)}
                                     required
-                                    isFocused
                                     className="my-1 block w-full"
                                 />
 
@@ -167,19 +165,11 @@ function AttributesTable({attributes, productId}) {
         >
             <div className="table-header-group text-xs uppercase">
                 <div className="table-row text-nowrap border-b">
-                    <div className="table-cell px-3 py-3 w-1/5">type</div>
+                    <div className="table-cell px-3 py-3 w-1/6">type</div>
                     <div className="table-cell px-3 py-3">name</div>
+                    <div className="table-cell px-3 py-3 w-1/4">value</div>
                     <div className="table-cell px-3 py-3 w-1/5">unit</div>
-                    <div className="table-cell px-3 py-3 w-1/6 text-center">
-                        <button
-                            onClick={() => showCreateAttributeRow()}
-                            className="text-white bg-green-600 md:bg-green-500 hover:bg-green-600 text-font-bold p-3 rounded inline-flex items-center"
-                        >
-                            <svg className="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" stroke="white" strokeWidth="2"/>
-                            </svg>
-                            <span className="ml-2 hidden md:flex">New</span>
-                        </button>
+                    <div className="table-cell px-3 py-3 w-1/7 text-center">
                     </div>
                 </div>
             </div>
@@ -191,33 +181,59 @@ function AttributesTable({attributes, productId}) {
 }
 
 function AttributeRow({attribute}) {
-    const deleteAttribute = (attribute) => {
-        if(!window.confirm("Delete attribute? This operation cannot be undone."))
-            return
-
-        router.delete(route('productattributes.destroy', attribute.id), {
-            preserveState: true,
-            preserveScroll: true
-        });
+    const submitRowForm = (target) => {
+        target.closest('.table-row').querySelector('form').requestSubmit();
     }
 
     return (
         <div
             className="table-row bg-white border-b"
         >
-            <div className="table-cell p-3">{attribute.type.name}</div>
-            <div className="table-cell p-3">{attribute.name}</div>
-            <div className="table-cell p-3">{attribute.unit}</div>
-            <div className="table-cell p-3 text-center">
+            <div className="table-cell p-3 align-middle">{attribute.type.name}</div>
+            <div className="table-cell p-3 align-middle">{attribute.name}</div>
+            <div className="table-cell p-3 align-middle">
+                <UpdateAttributeValueForm attribute={attribute} />
+            </div>
+            <div className="table-cell p-3 align-middle">{attribute.unit}</div>
+            <div className="table-cell p-3 align-middle">
                 <button
-                    onClick={() => deleteAttribute(attribute)}
-                    className="text-white bg-red-600 md:bg-red-500 hover:bg-red-600 text-font-bold p-3 rounded inline-flex items-center ml-auto"
+                    onClick={(e) => submitRowForm(e.target)}
+                    className="text-white bg-blue-600 md:bg-blue-500 hover:bg-blue-600 text-font-bold p-3 rounded inline-flex items-center"
                 >
                     <svg className="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                        <path d="M11 2H9v3h2z"/>
+                        <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
                     </svg>
                 </button>
             </div>
         </div>
     );
+}
+
+function UpdateAttributeValueForm({attribute}) {
+    const {data, setData, post, errors, reset} = useForm({
+        value: attribute.value || '',
+        _method: 'PUT'
+    })
+    const onSubmit = (e) => {
+        e.preventDefault();
+        post(route('productattributes.update', attribute.id), {
+            preserveScroll: true
+        });
+    }
+
+    const input = <>
+        <TextInput
+            id="value"
+            value={data.value}
+            onChange={(e) => setData('value', e.target.value)}
+            required
+            className="my-1 block w-full"
+        />
+        <InputError className="mt-2" message={errors.value} />
+    </>;
+
+    return <form onSubmit={onSubmit}>
+        {input}
+    </form>
 }
