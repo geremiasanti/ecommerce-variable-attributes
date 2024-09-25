@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Resources\CategoryAttributeResource;
 use App\Http\Resources\CategoryAttributeTypeResource;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\CategoryAttributeType;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
@@ -60,15 +58,15 @@ class CategoryController extends Controller
             $categoryCreated->save();
         };
 
-        return to_route('categories.index')
-            ->with('success', "New category \"$categoryCreated->name\" created"); }
+        return to_route('categories.edit', $categoryCreated->id);
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(Category $category)
     {
-        //
+        return inertia('Category/Show');
     }
 
     /**
@@ -131,5 +129,23 @@ class CategoryController extends Controller
 
         return to_route('categories.index')
             ->with('success', "Category \"$categoryName\" deleted");
+    }
+
+    public function explore() {
+        $categoriesQuery = Category::query();
+
+        $filter = request('filter');
+        if($filter) {
+            $categoriesQuery->where('name', 'like', "%$filter%");
+        }
+
+        $categoriesQuery->orderBy('name');
+        $categoriesPaginated = $categoriesQuery->paginate(7)->withQueryString();
+
+        return inertia('Category/Explore', [
+            'placeHolderUri' => Storage::url('placeholder.png'),
+            'categoriesPaginated' => CategoryResource::collection($categoriesPaginated),
+            'queryParams' => request()->query() ?: null,
+        ]);
     }
 }
