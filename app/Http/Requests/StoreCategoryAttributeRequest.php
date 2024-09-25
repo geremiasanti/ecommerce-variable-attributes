@@ -11,7 +11,7 @@ class StoreCategoryAttributeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,12 @@ class StoreCategoryAttributeRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            //
+            'category_id' => ['required'],
+            'type_id' => ['required'],
+            'name' => ['required'],
+            'unit' => ['nullable']
         ];
     }
 }

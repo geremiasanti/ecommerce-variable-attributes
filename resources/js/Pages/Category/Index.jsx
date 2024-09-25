@@ -26,7 +26,11 @@ export default function Index({placeHolderUri, categoriesPaginated, queryParams,
         if(!window.confirm("Delete category? This operation cannot be undone."))
             return
 
-        router.delete(route('categories.destroy', category.id));
+        router.delete(route('categories.destroy', category.id), {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true
+        });
     }
 
     return (

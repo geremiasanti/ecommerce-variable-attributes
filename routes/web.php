@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryAttributeController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware('auth')->group(function () {
     // profile
@@ -16,6 +16,11 @@ Route::middleware('auth')->group(function () {
 
     // categories
     Route::resource('/categories', CategoryController::class);
+
+    // category attributes
+    Route::resource('/categoryattributes', CategoryAttributeController::class)->only([
+        'store', 'destroy'
+    ]);
 });
 
 Route::redirect('/', route('categories.index'));
