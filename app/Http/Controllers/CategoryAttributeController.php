@@ -13,7 +13,7 @@ class CategoryAttributeController extends Controller
         $validated = $request->validated();
         CategoryAttribute::create($validated);
 
-        return back()->with('attributeStored', true);
+        return back();
     }
 
     public function destroy($id)

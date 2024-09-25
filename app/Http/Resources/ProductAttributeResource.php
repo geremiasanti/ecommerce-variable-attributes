@@ -12,8 +12,10 @@ class ProductAttributeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'value' => $this->value
+            'value' => $this->value,
+            'name' => $this->categoryAttribute->name,
+            'type' => $this->categoryAttribute->type,
+            'unit' => $this->categoryAttribute->unit
         ];
     }
 }

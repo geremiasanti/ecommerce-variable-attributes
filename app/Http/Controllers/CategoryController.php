@@ -84,7 +84,6 @@ class CategoryController extends Controller
             'attributeTypeOptions' => CategoryAttributeTypeResource::collection(
                 CategoryAttributeType::all()
             ),
-            'attributeStored' => session('attributeStored')
         ]);
     }
 
