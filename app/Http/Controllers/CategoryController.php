@@ -6,8 +6,10 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryAttributeTypeResource;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\CategoryAttributeType;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
@@ -66,7 +68,23 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return inertia('Category/Show');
+        $productsQuery = Product::query()
+            ->where('category_id', $category->id);
+
+        $filter = request('filter');
+        if($filter) {
+            $productsQuery ->where('name', 'like', "%$filter%");
+        }
+
+        $productsQuery->orderBy('name');
+        $productsPaginated = $productsQuery->paginate(7)->withQueryString();
+
+        return inertia('Category/Show', [
+            'placeHolderUri' => Storage::url('placeholder.png'),
+            'category' => new CategoryResource($category),
+            'productsPaginated' => ProductResource::collection($productsPaginated),
+            'queryParams' => request()->query() ?: null,
+        ]);
     }
 
     /**
