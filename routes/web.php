@@ -18,7 +18,8 @@ Route::middleware('auth')->group(function () {
 
     // categories
     Route::resource('/categories', CategoryController::class);
-    Route::get('/explore', [CategoryController::class, 'explore']);
+    Route::get('/explore', [CategoryController::class, 'explore'])
+        ->name('explore');
 
     // category attributes
     Route::resource('/categoryattributes', CategoryAttributeController::class)->only([

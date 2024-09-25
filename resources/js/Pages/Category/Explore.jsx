@@ -15,20 +15,9 @@ export default function Index({placeHolderUri, categoriesPaginated, queryParams,
 
         queryParams['page'] = 1;
 
-        router.get(route('categories.index'), queryParams, {
+        router.get(route('explore'), queryParams, {
             preserveScroll: true,
             preserveState: true,
-            replace: true
-        });
-    }
-
-    const deleteCategory = (category) => {
-        if(!window.confirm("Delete category? This operation cannot be undone."))
-            return
-
-        router.delete(route('categories.destroy', category.id), {
-            preserveState: true,
-            preserveScroll: true,
             replace: true
         });
     }
@@ -53,7 +42,6 @@ export default function Index({placeHolderUri, categoriesPaginated, queryParams,
                     </nav>
                     <CategoriesList
                         categories={categoriesPaginated.data}
-                        onCategoryDelete={deleteCategory}
                         placeHolderUri={placeHolderUri}
                     />
                     <Pagination links={categoriesPaginated.meta.links} />
