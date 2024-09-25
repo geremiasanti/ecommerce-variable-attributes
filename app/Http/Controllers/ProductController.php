@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -22,6 +23,7 @@ class ProductController extends Controller
         $productsPaginated = $productsQuery->paginate(7)->withQueryString();
 
         return inertia('Product/Index', [
+            'placeHolderUri' => Storage::url('placeholder.png'),
             'productsPaginated' => ProductResource::collection($productsPaginated),
             'queryParams' => request()->query() ?: null,
             'success' => session('success')

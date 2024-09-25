@@ -19,6 +19,7 @@ return new class extends Migration
 
             $table->string('name');
             $table->float('price');
+            $table->string('image_path')->nullable();
 
             $table->timestamps();
         });

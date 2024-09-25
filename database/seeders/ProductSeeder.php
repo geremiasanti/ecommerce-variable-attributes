@@ -36,7 +36,13 @@ class ProductSeeder extends Seeder
         ];
 
         foreach($computers as $computer) {
-            Product::create($computer);
+            $product = Product::create($computer);
+            $product->image_path = str_replace(
+                'CCCCCC',
+                Category::IMAGE_BG_PALETTE[array_rand(Category::IMAGE_BG_PALETTE)],
+                fake()->imageUrl(100, 100, null, false, $product->name, true)
+            );
+            $product->save();
         }
     }
 }

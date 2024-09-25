@@ -13,7 +13,21 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'image_path' => self::handleImagesAndPlaceholders($this->image_path),
+            'category' => new CategoryResource($this->category),
             'attributes' => ProductAttributeResource::collection($this->whenLoaded('attributes'))
         ];
+    }
+
+    private static function handleImagesAndPlaceholders($image_path) {
+        if(!$image_path) {
+            return '';
+        }
+
+        if(str_contains($image_path, 'https://via.placeholder.com/')) {
+            return $image_path;
+        } else {
+            return Storage::url($image_path);
+        }
     }
 }
