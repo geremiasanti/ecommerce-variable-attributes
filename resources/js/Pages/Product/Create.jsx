@@ -2,28 +2,40 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
+import SelectInput from '@/Components/SelectInput';
 import TextInput from '@/Components/TextInput';
 
 import { Head, useForm } from '@inertiajs/react';
 
-export default function Create() {
+export default function Create({categories}) {
     const {data, setData, post, errors, reset} = useForm({
+        category_id: '',
         name: '',
+        price: '',
         image: ''
     })
     const onSubmit = (e) => {
         e.preventDefault();
 
-        post(route('categories.store'), {
+        post(route('products.store'), {
             forceFormData: true
         });
     }
 
+    const categoryOptions = [
+        <option key="empty" value="" data-unit="0"></option>,
+        ...categories.data.map(category =>
+            <option key={category.id} value={category.id} data-unit={category.can_have_unit}>
+                {category.name}
+            </option>
+        )
+    ];
+
     return (
         <AuthenticatedLayout
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Create category</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Create product</h2>}
         >
-            <Head title="New category" />
+            <Head title="New product" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -32,12 +44,44 @@ export default function Create() {
                         onSubmit={onSubmit}
                     >
                         <div className="m-2">
+                            <InputLabel htmlFor="category_id" value="Category" />
+
+                            <SelectInput
+                                name=""
+                                id="category_id"
+                                value={data.type_id}
+                                onChange={(e) => setData('category_id', e.target.value)}
+                                className="my-1 block w-full"
+                                required
+                            >
+                                {categoryOptions}
+                            </SelectInput>
+
+                            <InputError className="mt-2" message={errors.category_id} />
+                        </div>
+                        <div className="m-2">
                             <InputLabel htmlFor="name" value="Name" />
 
                             <TextInput
                                 id="name"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
+                                required
+                                isFocused
+                                className="my-1 block w-full"
+                            />
+
+                            <InputError className="mt-2" message={errors.name} />
+                        </div>
+                        <div className="m-2">
+                            <InputLabel htmlFor="price" value="Price (EUR)" />
+
+                            <TextInput
+                                id="price"
+                                type="number"
+                                step=".01"
+                                value={data.price}
+                                onChange={(e) => setData('price', e.target.value)}
                                 required
                                 isFocused
                                 className="my-1 block w-full"

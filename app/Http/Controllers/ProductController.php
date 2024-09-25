@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -35,7 +37,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return inertia('Product/Create');
+        return inertia('Product/Create', [
+            'categories' => CategoryResource::collection(Category::all())
+        ]);
     }
 
     /**
@@ -45,6 +49,14 @@ class ProductController extends Controller
     {
         $data = $request->validated();
         $productCreated = Product::create($data);
+
+        $image = empty($data['image']) ? null : $data['image'];
+        if($image) {
+            $imagePath = $image->store('products', 'public');
+            $productCreated->image_path = $imagePath;
+            $productCreated->save();
+        };
+
         return to_route('products.index')
             ->with('success', "New Product \"$productCreated->name\" created");
     }

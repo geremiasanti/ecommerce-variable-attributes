@@ -245,7 +245,7 @@ function CreateAttributeRow({typeOptions, categoryId}) {
             <div className="table-cell px-3 py-2">
                 <SelectInput
                     name=""
-                    id="task_project_id"
+                    id="type_id"
                     value={data.type_id}
                     onChange={(e) => onTypeSelectChange(e.target)}
                     className="my-1 block w-full"

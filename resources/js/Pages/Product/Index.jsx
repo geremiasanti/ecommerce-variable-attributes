@@ -102,8 +102,8 @@ function ProductRow({product, onProductDelete, placeHolderUri}) {
     return (
         <li className="h-10 md:h-20 flex bg-white shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
             <img className="w-10 md:w-20 rounded-l-lg" src={product.image_path || placeHolderUri} />
-            <span className="text-l md:text-3xl truncate my-auto mx-4">
-                <span className="text-gray-400">{product.category.name}&nbsp;&gt;&nbsp;</span>
+            <span className="text-lg md:text-3xl truncate my-auto mx-4">
+                <span className="text-2xl text-gray-400">{product.category.name}&nbsp;&gt;&nbsp;</span>
                 {product.name}
             </span>
             <Link
