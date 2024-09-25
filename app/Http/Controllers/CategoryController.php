@@ -76,7 +76,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        // load attributes
         $category->attributes;
+
         return inertia('Category/Edit', [
             'category' => new CategoryResource($category),
             'attributeTypeOptions' => CategoryAttributeTypeResource::collection(

@@ -4,16 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $productsQuery = Product::query();
+
+        $filter = request('filter');
+        if($filter) {
+            $productsQuery->where('name', 'like', "%$filter%");
+        }
+
+        $productsQuery->orderBy('name');
+        $productsPaginated = $productsQuery->paginate(7)->withQueryString();
+
+        return inertia('Product/Index', [
+            'productsPaginated' => ProductResource::collection($productsPaginated),
+            'queryParams' => request()->query() ?: null,
+            'success' => session('success')
+        ]);
     }
 
     /**
@@ -21,7 +33,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Product/Create');
     }
 
     /**
@@ -29,7 +41,10 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        $data = $request->validated();
+        $productCreated = Product::create($data);
+        return to_route('products.index')
+            ->with('success', "New Product \"$productCreated->name\" created");
     }
 
     /**
