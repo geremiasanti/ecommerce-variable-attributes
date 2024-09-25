@@ -3,7 +3,7 @@ import Pagination from '@/Components/Pagination';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, router } from '@inertiajs/react';
 
-export default function Index({placeHolderUri, categoriesPaginated, queryParams, success}) {
+export default function Index({placeHolderUri, categoriesPaginated, queryParams}) {
     queryParams ||= {};
 
     const filterInputChanged = (value) => {
@@ -28,11 +28,6 @@ export default function Index({placeHolderUri, categoriesPaginated, queryParams,
 
             <div className="py-6 text-gray-800">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    {success && (
-                        <div className="bg-emerald-500 py-2 px-4 text-white rounded mb-4">
-                            {success}
-                        </div>
-                    )}
                     <nav className="text-center">
                         <TextInput
                             placeholder="Filter..."
