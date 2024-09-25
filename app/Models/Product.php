@@ -6,24 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CategoryAttribute extends Model
+class Product extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'category_id',
-        'type_id',
         'name',
-        'unit',
+        'price',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(CategoryAttributeType::class);
     }
 }
