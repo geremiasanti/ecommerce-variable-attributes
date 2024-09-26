@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryAttributeTypeResource;
 use App\Http\Resources\CategoryAttributeResource;
 use App\Http\Resources\CategoryResource;
-use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductAttributeResource;
 use App\Models\Category;
 use App\Models\CategoryAttributeType;
 use App\Models\Product;
@@ -73,45 +73,55 @@ class CategoryController extends Controller
         $attributes = self::generateCategoryAttributes($category->attributes);
 
         $productsQuery = Product::query()
-            ->select('products.*')
-            ->join('product_attributes', 'products.id', 'product_attributes.product_id')
+            ->with('attributes')
             ->where('category_id', $category->id)
-            ->groupBy('products.id');
+            ->orderBy('products.name');
 
         $nameFilter = request('filter');
         if($nameFilter) {
             $productsQuery->where('name', 'like', "%$nameFilter%");
         }
 
+        /*
+        $priceFilterMax = request('price_filter_mx');
+        if($priceFilterMax) {
+            $productsQuery->where('price', '<=', intVal($priceFilterMax));
+        }
+
+        $priceFilterMin = request('price_filter_mn');
+        if($priceFilterMin) {
+            $productsQuery->where('price', '>=', intVal($priceFilterMin));
+        }
+        */
+
+        $filters = [];
         foreach(request()->query() as $key => $val) {
             if(str_contains($key, '_min') || str_contains($key, '_max')) {
                 $val = intval($val);
-
                 list($categoryAttributeId, $minOrMax) = explode("_", $key, 2);
-
-                $productsQuery->where(function($query) use ($val, $categoryAttributeId, $minOrMax) {
-                    $query->where('product_attributes.category_attribute_id', $categoryAttributeId);
-                    if($minOrMax == 'min')
-                        $query->whereRaw('CONVERT(product_attributes.value, SIGNED) >= ?', [$val]);
-                    else
-                        $query->whereRaw('CONVERT(product_attributes.value, SIGNED) <= ?', [$val]);
-                });
+                $filters[$categoryAttributeId][$minOrMax] = $val;
             }
         }
 
-        $productsQuery->orderBy('name');
-        $productsPaginated = $productsQuery
-            ->orderBy('products.name')
-            ->with('attributes')
-            ->paginate(7)
-            ->withQueryString();
+        $products = $productsQuery->get();
+        foreach($products as $product) {
+            foreach($product->attributes as $attribute) {
+                $attribute = $attribute->categoryAttribute;
+            }
+        }
+        $products = $products->toArray();
+
+        $filterProducts = function($product) use ($filters) {
+            return self::filterProducts($product, $filters);
+        };
+        $productsFiltered = array_filter($products, $filterProducts);
 
         return inertia('Category/Show', [
             'placeHolderUri' => Storage::url('placeholder.png'),
             'category' => new CategoryResource($category),
-            'productsPaginated' => ProductResource::collection($productsPaginated),
+            'products' => $productsFiltered,
             'queryParams' => request()->query() ?: null,
-            'attributes' => [$attributes[0]]
+            'attributes' => $attributes
         ]);
     }
 
@@ -216,5 +226,19 @@ class CategoryController extends Controller
         }
 
         return $attributes;
+    }
+
+    private static function filterProducts($product, $filters)
+    {
+        foreach($product['attributes'] as $att) {
+            if(!array_key_exists($att['category_attribute_id'], $filters))
+                continue;
+
+            if(
+                $att['value'] > $filters[$att['category_attribute_id']]['max'] ||
+                $att['value'] < $filters[$att['category_attribute_id']]['min']
+            ) return false;
+        }
+        return true;
     }
 }

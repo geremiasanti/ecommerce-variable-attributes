@@ -1,10 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import Pagination from '@/Components/Pagination';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import { Head, Link, router } from '@inertiajs/react';
 
-export default function Index({placeHolderUri, category, productsPaginated, queryParams, attributes}) {
+export default function Index({placeHolderUri, category, products, queryParams, attributes}) {
     queryParams ||= {};
 
     queryParams.attributes = attributes.map((attribute) => ({
@@ -102,10 +101,9 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
                                 />
                             </nav>
                             <ProductsList
-                                products={productsPaginated.data}
+                                products={products}
                                 placeHolderUri={placeHolderUri}
                             />
-                            <Pagination links={productsPaginated.meta.links} />
                         </div>
                     </div>
                 </div>
@@ -140,18 +138,20 @@ function ProductsList({products, placeHolderUri}) {
 }
 
 function ProductRow({product, placeHolderUri}) {
+    console.log(product);
     const productAttributes = product.attributes
-        .sort((a,b) => a.name.localeCompare(b.name))
+        .sort((a,b) => a.category_attribute.name.localeCompare(b.category_attribute.name))
         .map((attribute) =>
             <div key={attribute.name}>
-                <span className="font-bold">{attribute.name}:&nbsp;</span>
-                <span>{attribute.value}</span>
+                <span className="font-bold">{attribute.category_attribute.name}:&nbsp;</span>
+                <span>{attribute.value}&nbsp;</span>
+                <span>{attribute.category_attribute.unit}</span>
             </div>
         );
 
     return (
         <Link
-            href={route('products.show', product.id)}
+            //href={route('products.show', product.id)}
         >
             <li className="flex-wrap bg-white hover:bg-gray-200 shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
                 <div className="flex w-full">
