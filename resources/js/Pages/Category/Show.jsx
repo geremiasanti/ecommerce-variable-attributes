@@ -138,11 +138,10 @@ function ProductsList({products, placeHolderUri}) {
 }
 
 function ProductRow({product, placeHolderUri}) {
-    console.log(product);
     const productAttributes = product.attributes
         .sort((a,b) => a.category_attribute.name.localeCompare(b.category_attribute.name))
         .map((attribute) =>
-            <div key={attribute.name}>
+            <div key={attribute.category_attribute.name}>
                 <span className="font-bold">{attribute.category_attribute.name}:&nbsp;</span>
                 <span>{attribute.value}&nbsp;</span>
                 <span>{attribute.category_attribute.unit}</span>
