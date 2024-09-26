@@ -125,20 +125,28 @@ function ProductsList({products, placeHolderUri}) {
 }
 
 function ProductRow({product, placeHolderUri}) {
+    const productAttributes = product.attributes
+        .sort((a,b) => a.name.localeCompare(b.name))
+        .map((attribute) =>
+            <div key={attribute.name}>
+                <span className="font-bold">{attribute.name}:&nbsp;</span>
+                <span>{attribute.value}</span>
+            </div>
+        );
+
     return (
         <Link
             href={route('products.show', product.id)}
         >
-            <li className="h-10 md:h-20 flex bg-white hover:bg-gray-200 shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
-                <img className="w-10 md:w-20 rounded-l-lg" src={product.image_path || placeHolderUri} />
-                <span className="text-l md:text-3xl truncate my-auto mx-4">{product.name}</span>
-                <span
-                    className="text-gray-800  inline-flex items-center p-4 ml-auto"
-                >
-                    <svg className="fill-current w-10 h-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-                    </svg>
-                </span>
+            <li className="flex-wrap bg-white hover:bg-gray-200 shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
+                <div className="flex w-full">
+                    <img className="w-10 md:w-20 rounded-l-lg" src={product.image_path || placeHolderUri} />
+                    <span className="text-l md:text-3xl truncate my-auto mx-4">{product.name}</span>
+                    <span className="text-l text-gray-600 md:text-3xl truncate my-auto ml-auto mx-4">{product.price}&nbsp;€</span>
+                </div>
+                <div className="text-gray-600 pt-3">
+                    {productAttributes}
+                </div>
             </li>
         </Link>
     );

@@ -98,7 +98,10 @@ class CategoryController extends Controller
         }
 
         $productsQuery->orderBy('name');
-        $productsPaginated = $productsQuery->paginate(7)->withQueryString();
+        $productsPaginated = $productsQuery
+            ->with('attributes')
+            ->paginate(7)
+            ->withQueryString();
 
         return inertia('Category/Show', [
             'placeHolderUri' => Storage::url('placeholder.png'),
