@@ -15,8 +15,13 @@ class ProductSeeder extends Seeder
         $computers = [
             [
                 'category_id' => $computersCategoryId,
+                'name' => 'Chromebook',
+                'price' => 150.00,
+            ],
+            [
+                'category_id' => $computersCategoryId,
                 'name' => 'Thinkpad',
-                'price' => 299.0,
+                'price' => 299.00,
             ],
             [
                 'category_id' => $computersCategoryId,
@@ -31,6 +36,16 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => $computersCategoryId,
                 'name' => 'HP Desktop',
+                'price' => 600,
+            ],
+            [
+                'category_id' => $computersCategoryId,
+                'name' => 'Vivobook',
+                'price' => 600,
+            ],
+            [
+                'category_id' => $computersCategoryId,
+                'name' => 'Ideapad',
                 'price' => 600,
             ],
         ];

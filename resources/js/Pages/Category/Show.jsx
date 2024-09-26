@@ -1,19 +1,34 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
 import TextInput from '@/Components/TextInput';
+import InputLabel from '@/Components/InputLabel';
 import { Head, Link, router } from '@inertiajs/react';
 
-export default function Index({placeHolderUri, category, productsPaginated, queryParams}) {
+export default function Index({placeHolderUri, category, productsPaginated, queryParams, attributes}) {
     queryParams ||= {};
 
-    const filterInputChanged = (value) => {
-        if(value) {
-            queryParams['filter'] = value;
-        } else {
-            delete queryParams['filter'];
-        }
+    queryParams.attributes = attributes.map((attribute) => ({
+        categoryAttributeId: attribute.categoryAttribute.data.id,
+        name: attribute.categoryAttribute.data.name,
+        type: attribute.categoryAttribute.data.type.name,
+        min: attribute.min || null,
+        max: attribute.max || null,
+        options: attribute.options ? attribute.options : null,
+    }));
 
+    const getWithFilters = (queryParams) => {
         queryParams['page'] = 1;
+
+        const attributes = queryParams.attributes
+        delete queryParams.attributes
+
+        console.log(attributes, queryParams);
+        attributes.forEach((a) => {
+            queryParams[`${a.categoryAttributeId}_min`] = a.min;
+            queryParams[`${a.categoryAttributeId}_max`] = a.max;
+        })
+
+        console.log(queryParams);
 
         router.get(route('categories.show', category.data.id), queryParams, {
             preserveScroll: true,
@@ -22,25 +37,63 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
         });
     }
 
+    const filterInputChanged = (value) => {
+        if(value) {
+            queryParams['filter'] = value;
+        } else {
+            delete queryParams['filter'];
+        }
+
+        getWithFilters(queryParams);
+    }
+
+    const attributeFilterInputChanged = (categoryAttributeId, value, isMin = true) => {
+        queryParams.attributes.forEach((param) => {
+            if(param.categoryAttributeId === categoryAttributeId)
+                if(isMin)
+                    param.min = value;
+                else
+                    param.max = value;
+        });
+        getWithFilters(queryParams);
+    }
+
+    const filters = queryParams.attributes.map((attribute) => {
+        if(attribute.type === "Integer") {
+            return <IntegerFilter
+                key={attribute.id}
+                onAttributeFilterChange={attributeFilterInputChanged}
+                attribute={attribute}
+            />
+        }
+    });
+
     return (
         <AuthenticatedLayout header={<Header categoryName={category.data.name}/>}>
             <Head title="Explore" />
-
-            <div className="py-6 text-gray-800">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    <nav className="text-center">
-                        <TextInput
-                            placeholder="Filter..."
-                            defaultValue={queryParams.filter}
-                            onKeyUp={e => filterInputChanged(e.target.value)}
-                        />
-                    </nav>
-                    <ProductsList
-                        products={productsPaginated.data}
-                        placeHolderUri={placeHolderUri}
-                    />
-                    <Pagination links={productsPaginated.meta.links} />
+            <div className="w-full flex max-h-svh">
+                <div key="sidebar" className="h-100 flex-[0.3]">
+                    <div key="filters" className="grid grid-cols-2 h-full content-start bg-white shadow">
+                        {filters}
+                    </div>
                 </div>
+                <div key="main" className="h-full flex-1">
+                    <div className="py-6 text-gray-800">
+                        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                            <nav className="text-center">
+                                <TextInput
+                                    placeholder="Filter..."
+                                    defaultValue={queryParams.filter}
+                                    onKeyUp={e => filterInputChanged(e.target.value)}
+                                />
+                            </nav>
+                            <ProductsList
+                                products={productsPaginated.data}
+                                placeHolderUri={placeHolderUri}
+                            />
+                            <Pagination links={productsPaginated.meta.links} />
+                        </div>
+                    </div> </div>
             </div>
         </AuthenticatedLayout>
     );
@@ -89,4 +142,38 @@ function ProductRow({product, placeHolderUri}) {
             </li>
         </Link>
     );
+}
+
+function IntegerFilter({attribute, onAttributeFilterChange}) {
+    return <>
+        <div key="label" className="p-2 col-span-2">
+            <span className="font-bold">{attribute.name}</span>
+        </div>
+        <div key="min" className="px-1">
+            <InputLabel key="label" value="Min" />
+            <TextInput
+                key="input"
+                className="w-full"
+                defaultValue={attribute.min}
+                onChange={e => onAttributeFilterChange(
+                    attribute.categoryAttributeId,
+                    e.target.value,
+                    true
+                )}
+            />
+        </div>
+        <div key="max" className="px-1">
+            <InputLabel key="label" value="Max" />
+            <TextInput
+                key="input"
+                className="w-full"
+                defaultValue={attribute.max}
+                onChange={e => onAttributeFilterChange(
+                    attribute.categoryAttributeId,
+                    e.target.value,
+                    false
+                )}
+            />
+        </div>
+    </>
 }

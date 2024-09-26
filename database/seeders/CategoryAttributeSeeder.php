@@ -17,10 +17,22 @@ class CategoryAttributeSeeder extends Seeder
 
         $computersCategoryAttributes = [
             [
+                'name' => 'Hard Drive',
+                'category_id' => $computersCategoryId,
+                'type_id' => $types['Integer'],
+                'unit' => "GB"
+            ],
+            [
                 'name' => 'RAM',
                 'category_id' => $computersCategoryId,
                 'type_id' => $types['Integer'],
                 'unit' => "GB"
+            ],
+            [
+                'name' => 'Velocità processore',
+                'category_id' => $computersCategoryId,
+                'type_id' => $types['Integer'],
+                'unit' => "GHz"
             ],
             [
                 'name' => 'Grandezza schermo',
@@ -28,13 +40,11 @@ class CategoryAttributeSeeder extends Seeder
                 'type_id' => $types['Decimal'],
                 'unit' => "Pollici"
             ],
-            /*
             [
                 'name' => 'Tipologia',
                 'category_id' => $computersCategoryId,
-                'type_id' => $types['Options']
+                'type_id' => $types['String']
             ],
-            */
             [
                 'name' => 'Processore',
                 'category_id' => $computersCategoryId,

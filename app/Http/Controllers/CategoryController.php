@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryAttributeTypeResource;
+use App\Http\Resources\CategoryAttributeResource;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\CategoryAttributeType;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
@@ -68,13 +70,31 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
+        $attributes = self::generateCategoryAttributes($category->attributes);
+
         $productsQuery = Product::query()
+            ->join('product_attributes', 'products.id', 'product_attributes.product_id')
             ->where('category_id', $category->id);
 
-        $filter = request('filter');
-        if($filter) {
-            $productsQuery ->where('name', 'like', "%$filter%");
+        $nameFilter = request('filter');
+        if($nameFilter) {
+            $productsQuery->where('name', 'like', "%$nameFilter%");
         }
+
+        foreach(request()->query() as $key => $val) {
+            if(str_contains($key, '_min') || str_contains($key, '_max')) {
+                list($categoryAttributeId, $minOrMax) = explode("_", $key, 2);
+
+                $productsQuery->where(function($query) use ($val, $categoryAttributeId, $minOrMax) {
+                    $query->where('product_attributes.category_attribute_id', $categoryAttributeId);
+                    if($minOrMax == 'min')
+                        $query->where('product_attributes.value', '>=', $val);
+                    else
+                        $query->where('product_attributes.value', '<=', $val);
+                });
+            }
+        }
+        dd($productsQuery->get()->toArray());
 
         $productsQuery->orderBy('name');
         $productsPaginated = $productsQuery->paginate(7)->withQueryString();
@@ -84,6 +104,7 @@ class CategoryController extends Controller
             'category' => new CategoryResource($category),
             'productsPaginated' => ProductResource::collection($productsPaginated),
             'queryParams' => request()->query() ?: null,
+            'attributes' => $attributes
         ]);
     }
 
@@ -165,5 +186,28 @@ class CategoryController extends Controller
             'categoriesPaginated' => CategoryResource::collection($categoriesPaginated),
             'queryParams' => request()->query() ?: null,
         ]);
+    }
+
+    private static function generateCategoryAttributes($categoryAttributes)
+    {
+        $attributes = [];
+        foreach($categoryAttributes as $categoryAttribute) {
+            if($categoryAttribute->type->name == "Integer") {
+                $values = array_map(
+                    'intval',
+                    ProductAttribute::query()
+                        ->where('category_attribute_id', $categoryAttribute->id)
+                        ->pluck('value')
+                        ->toArray()
+                );
+                $attributes[] = [
+                    'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
+                    'min' => min($values),
+                    'max' => max($values),
+                ];
+            }
+        }
+
+        return $attributes;
     }
 }
