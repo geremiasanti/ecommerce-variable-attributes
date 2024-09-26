@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryAttributeTypeResource;
 use App\Http\Resources\CategoryAttributeResource;
 use App\Http\Resources\CategoryResource;
-use App\Http\Resources\ProductAttributeResource;
 use App\Models\Category;
 use App\Models\CategoryAttributeType;
 use App\Models\Product;
@@ -70,7 +69,6 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        $attributes = self::generateCategoryAttributes($category->attributes);
 
         $productsQuery = Product::query()
             ->with('attributes')
@@ -102,6 +100,7 @@ class CategoryController extends Controller
                 $filters[$categoryAttributeId][$minOrMax] = $val;
             }
         }
+        \Log::debug(print_r($filters, true));
 
         $products = $productsQuery->get();
         foreach($products as $product) {
@@ -114,8 +113,9 @@ class CategoryController extends Controller
         $filterProducts = function($product) use ($filters) {
             return self::filterProducts($product, $filters);
         };
-        $productsFiltered = array_filter($products, $filterProducts);
+        $productsFiltered = array_values(array_filter($products, $filterProducts));
 
+        $attributes = self::generateCategoryAttributes($category->attributes, $filters);
         return inertia('Category/Show', [
             'placeHolderUri' => Storage::url('placeholder.png'),
             'category' => new CategoryResource($category),
@@ -205,23 +205,31 @@ class CategoryController extends Controller
         ]);
     }
 
-    private static function generateCategoryAttributes($categoryAttributes)
+    private static function generateCategoryAttributes($categoryAttributes, $filters)
     {
         $attributes = [];
         foreach($categoryAttributes as $categoryAttribute) {
             if($categoryAttribute->type->name == "Integer") {
-                $values = array_map(
-                    'intval',
-                    ProductAttribute::query()
-                        ->where('category_attribute_id', $categoryAttribute->id)
-                        ->pluck('value')
-                        ->toArray()
-                );
-                $attributes[] = [
-                    'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
-                    'min' => min($values),
-                    'max' => max($values),
-                ];
+                if(array_key_exists($categoryAttribute->id, $filters)) {
+                    $attributes[] = [
+                        'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
+                        'min' => $filters[$categoryAttribute->id]['min'],
+                        'max' => $filters[$categoryAttribute->id]['max'],
+                    ];
+                } else {
+                    $values = array_map(
+                        'intval',
+                        ProductAttribute::query()
+                            ->where('category_attribute_id', $categoryAttribute->id)
+                            ->pluck('value')
+                            ->toArray()
+                    );
+                    $attributes[] = [
+                        'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
+                        'min' => min($values),
+                        'max' => max($values),
+                    ];
+                }
             }
         }
 

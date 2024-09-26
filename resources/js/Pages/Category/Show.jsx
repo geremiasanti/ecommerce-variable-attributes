@@ -4,6 +4,8 @@ import InputLabel from '@/Components/InputLabel';
 import { Head, Link, router } from '@inertiajs/react';
 
 export default function Index({placeHolderUri, category, products, queryParams, attributes}) {
+    console.log(products.length)
+
     queryParams ||= {};
 
     queryParams.attributes = attributes.map((attribute) => ({
