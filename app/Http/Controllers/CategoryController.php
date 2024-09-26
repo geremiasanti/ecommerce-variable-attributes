@@ -85,6 +85,8 @@ class CategoryController extends Controller
 
         foreach(request()->query() as $key => $val) {
             if(str_contains($key, '_min') || str_contains($key, '_max')) {
+                $val = intval($val);
+
                 list($categoryAttributeId, $minOrMax) = explode("_", $key, 2);
 
                 $productsQuery->where(function($query) use ($val, $categoryAttributeId, $minOrMax) {

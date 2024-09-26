@@ -16,6 +16,16 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
         options: attribute.options ? attribute.options : null,
     }));
 
+    const debounce = (callback, wait) => {
+        let timeoutId = null;
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => {
+                callback(...args);
+            }, wait);
+        };
+    }
+
     const getWithFilters = (queryParams) => {
         queryParams['page'] = 1;
 
@@ -44,8 +54,7 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
         getWithFilters(queryParams);
     }
 
-    const attributeFilterInputChanged = (categoryAttributeId, value, isMin = true) => {
-        if(!queryParams.attributes) queryParams.attributes = [];
+    const attributeFilterInputChanged = debounce((categoryAttributeId, value, isMin = true) => {
         if(!value) {
             const categoryAttribute = attributes.find((att) =>
                 att.categoryAttribute.data.id == categoryAttributeId
@@ -61,7 +70,7 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
                     param.max = value;
         });
         getWithFilters(queryParams);
-    }
+    }, 250);
 
     const filters = queryParams.attributes.map((attribute) => {
         if(attribute.type === "Integer") {
