@@ -73,8 +73,10 @@ class CategoryController extends Controller
         $attributes = self::generateCategoryAttributes($category->attributes);
 
         $productsQuery = Product::query()
+            ->select('products.*')
             ->join('product_attributes', 'products.id', 'product_attributes.product_id')
-            ->where('category_id', $category->id);
+            ->where('category_id', $category->id)
+            ->groupBy('products.id');
 
         $nameFilter = request('filter');
         if($nameFilter) {
@@ -88,13 +90,12 @@ class CategoryController extends Controller
                 $productsQuery->where(function($query) use ($val, $categoryAttributeId, $minOrMax) {
                     $query->where('product_attributes.category_attribute_id', $categoryAttributeId);
                     if($minOrMax == 'min')
-                        $query->where('product_attributes.value', '>=', $val);
+                        $query->whereRaw('CONVERT(product_attributes.value, SIGNED) >= ?', [$val]);
                     else
-                        $query->where('product_attributes.value', '<=', $val);
+                        $query->whereRaw('CONVERT(product_attributes.value, SIGNED) <= ?', [$val]);
                 });
             }
         }
-        dd($productsQuery->get()->toArray());
 
         $productsQuery->orderBy('name');
         $productsPaginated = $productsQuery->paginate(7)->withQueryString();
@@ -104,7 +105,7 @@ class CategoryController extends Controller
             'category' => new CategoryResource($category),
             'productsPaginated' => ProductResource::collection($productsPaginated),
             'queryParams' => request()->query() ?: null,
-            'attributes' => $attributes
+            'attributes' => [$attributes[0]]
         ]);
     }
 
