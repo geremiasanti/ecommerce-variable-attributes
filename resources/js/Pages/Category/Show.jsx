@@ -66,7 +66,7 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
     const filters = queryParams.attributes.map((attribute) => {
         if(attribute.type === "Integer") {
             return <IntegerFilter
-                key={attribute.id}
+                key={attribute.categoryAttributeId}
                 onAttributeFilterChange={attributeFilterInputChanged}
                 attribute={attribute}
             />
@@ -134,7 +134,7 @@ function ProductRow({product, placeHolderUri}) {
     const productAttributes = product.attributes
         .sort((a,b) => a.name.localeCompare(b.name))
         .map((attribute) =>
-            <div>
+            <div key={attribute.name}>
                 <span className="font-bold">{attribute.name}:&nbsp;</span>
                 <span>{attribute.value}</span>
             </div>
