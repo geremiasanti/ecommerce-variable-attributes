@@ -16,13 +16,22 @@ class ProductAttributeSeeder extends Seeder
      */
     public function run(): void
     {
+        $processors = [
+            'Intel Core i9',
+            'Intel Core i7',
+            'AMD Ryzen 9',
+            'AMD Ryzen 7'
+        ];
+
         $category = Category::where('name', 'Computers')->first();
         foreach($category->products as $categoryProduct) {
             foreach($category->attributes as $categoryAttribute) {
                 ProductAttribute::create([
                     'product_id' => $categoryProduct->id,
                     'category_attribute_id' => $categoryAttribute->id,
-                    'value' => self::getFakeValueForAttribute($categoryAttribute)
+                    'value' => $categoryAttribute->name == 'Processore'
+                        ? $processors[array_rand($processors)]
+                        : self::getFakeValueForAttribute($categoryAttribute)
                 ]);
             }
         }
@@ -33,7 +42,7 @@ class ProductAttributeSeeder extends Seeder
             return rand(0, 500);
         }
         if($categoryAttribute->type->name == "Decimal") {
-            return fake()->randomFloat();
+            return fake()->randomFloat(2, 0, 50);
         }
         if($categoryAttribute->type->name == "String") {
             return fake()->text(rand(5, 20));

@@ -242,7 +242,8 @@ function UpdateAttributeValueForm({attribute}) {
                 type="number"
                 step="1"
                 value={data.value}
-                onChange={(e) => setData('value', e.target.value)}
+                onChange={(e) => {setData('value', e.target.value) || null}}
+                //onChange={(e) => setData('value', e.target.value)}
                 className="my-1 block w-full"
             />
     }

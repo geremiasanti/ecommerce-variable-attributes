@@ -231,6 +231,29 @@ class CategoryController extends Controller
                     ];
                 }
             }
+
+            if($categoryAttribute->type->name == "Decimal") {
+                if(array_key_exists($categoryAttribute->id, $filters)) {
+                    $attributes[] = [
+                        'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
+                        'min' => $filters[$categoryAttribute->id]['min'],
+                        'max' => $filters[$categoryAttribute->id]['max'],
+                    ];
+                } else {
+                    $values = array_map(
+                        'floatval',
+                        ProductAttribute::query()
+                            ->where('category_attribute_id', $categoryAttribute->id)
+                            ->pluck('value')
+                            ->toArray()
+                    );
+                    $attributes[] = [
+                        'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
+                        'min' => min($values),
+                        'max' => max($values),
+                    ];
+                }
+            }
         }
 
         return $attributes;

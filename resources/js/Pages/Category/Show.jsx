@@ -4,8 +4,6 @@ import InputLabel from '@/Components/InputLabel';
 import { Head, Link, router } from '@inertiajs/react';
 
 export default function Index({placeHolderUri, category, products, queryParams, attributes}) {
-    console.log(products.length)
-
     queryParams ||= {};
 
     queryParams.attributes = attributes.map((attribute) => ({
@@ -74,8 +72,8 @@ export default function Index({placeHolderUri, category, products, queryParams, 
     }, 250);
 
     const filters = queryParams.attributes.map((attribute) => {
-        if(attribute.type === "Integer") {
-            return <IntegerFilter
+        if(attribute.type === "Integer" || attribute.type === "Decimal") {
+            return <NumberFilter
                 key={attribute.categoryAttributeId}
                 onAttributeFilterChange={attributeFilterInputChanged}
                 attribute={attribute}
@@ -142,6 +140,7 @@ function ProductsList({products, placeHolderUri}) {
 function ProductRow({product, placeHolderUri}) {
     const productAttributes = product.attributes
         .sort((a,b) => a.category_attribute.name.localeCompare(b.category_attribute.name))
+        .filter((attribute) => attribute.value)
         .map((attribute) =>
             <div key={attribute.category_attribute.name}>
                 <span className="font-bold">{attribute.category_attribute.name}:&nbsp;</span>
@@ -151,24 +150,20 @@ function ProductRow({product, placeHolderUri}) {
         );
 
     return (
-        <Link
-            //href={route('products.show', product.id)}
-        >
-            <li className="flex-wrap bg-white hover:bg-gray-200 shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
-                <div className="flex w-full">
-                    <img className="w-10 md:w-20 rounded-l-lg" src={product.image_path || placeHolderUri} />
-                    <span className="text-l md:text-3xl truncate my-auto mx-4">{product.name}</span>
-                    <span className="text-l text-gray-600 md:text-3xl truncate my-auto ml-auto mx-4">{product.price}&nbsp;€</span>
-                </div>
-                <div className="text-gray-600 pt-3">
-                    {productAttributes}
-                </div>
-            </li>
-        </Link>
+        <li className="flex-wrap bg-white hover:bg-gray-200 shadow-xl rounded-lg mb-1 md:mb-2 p-1 md:p-2">
+            <div className="flex w-full">
+                <img className="w-10 md:w-20 rounded-l-lg" src={product.image_path || placeHolderUri} />
+                <span className="text-l md:text-3xl truncate my-auto mx-4">{product.name}</span>
+                <span className="text-l text-gray-600 md:text-3xl truncate my-auto ml-auto mx-4">{product.price}&nbsp;€</span>
+            </div>
+            <div className="text-gray-600 pt-3">
+                {productAttributes}
+            </div>
+        </li>
     );
 }
 
-function IntegerFilter({attribute, onAttributeFilterChange}) {
+function NumberFilter({attribute, onAttributeFilterChange}) {
     return <>
         <div key="label" className="p-2 col-span-2">
             <span className="font-bold">{attribute.name}</span>
