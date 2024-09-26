@@ -221,16 +221,15 @@ class CategoryController extends Controller
                         'intval',
                         ProductAttribute::query()
                             ->where('category_attribute_id', $categoryAttribute->id)
-                            ->whereNotNull('value')
                             ->pluck('value')
                             ->toArray()
                     );
 
-                    if(count($values) <= 0) continue;
+                    if(self::allZeros($values)) continue;
 
                     $attributes[] = [
                         'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
-                        'min' => min($values),
+                        'min' => is_null(min($values)) ? 0 : min($values),
                         'max' => max($values),
                     ];
                 }
@@ -248,22 +247,20 @@ class CategoryController extends Controller
                         'floatval',
                         ProductAttribute::query()
                             ->where('category_attribute_id', $categoryAttribute->id)
-                            ->whereNotNull('value')
                             ->pluck('value')
                             ->toArray()
                     );
 
-                    if(count($values) <= 0) continue;
+                    if(self::allZeros($values)) continue;
 
                     $attributes[] = [
                         'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
-                        'min' => min($values),
+                        'min' => min($values) ?? 0,
                         'max' => max($values),
                     ];
                 }
             }
         }
-
         return $attributes;
     }
 
@@ -277,6 +274,13 @@ class CategoryController extends Controller
                 $att['value'] > $filters[$att['category_attribute_id']]['max'] ||
                 $att['value'] < $filters[$att['category_attribute_id']]['min']
             ) return false;
+        }
+        return true;
+    }
+
+    private static function allZeros($array) {
+        foreach($array as $el) {
+            if($el != 0) return false;
         }
         return true;
     }

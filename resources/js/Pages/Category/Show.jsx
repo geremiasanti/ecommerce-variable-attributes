@@ -173,7 +173,7 @@ function NumberFilter({attribute, onAttributeFilterChange}) {
             <TextInput
                 key="input"
                 className="w-full"
-                defaultValue={attribute.min}
+                defaultValue={attribute.min || 0}
                 onKeyUp={e => onAttributeFilterChange(
                     attribute.categoryAttributeId,
                     e.target.value,
