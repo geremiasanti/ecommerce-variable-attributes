@@ -22,13 +22,10 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
         const attributes = queryParams.attributes
         delete queryParams.attributes
 
-        console.log(attributes, queryParams);
         attributes.forEach((a) => {
             queryParams[`${a.categoryAttributeId}_min`] = a.min;
             queryParams[`${a.categoryAttributeId}_max`] = a.max;
         })
-
-        console.log(queryParams);
 
         router.get(route('categories.show', category.data.id), queryParams, {
             preserveScroll: true,
@@ -48,6 +45,14 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
     }
 
     const attributeFilterInputChanged = (categoryAttributeId, value, isMin = true) => {
+        if(!queryParams.attributes) queryParams.attributes = [];
+        if(!value) {
+            const categoryAttribute = attributes.find((att) =>
+                att.categoryAttribute.data.id == categoryAttributeId
+            )
+            value = isMin ? categoryAttribute.min : categoryAttribute.max;
+        }
+
         queryParams.attributes.forEach((param) => {
             if(param.categoryAttributeId === categoryAttributeId)
                 if(isMin)
@@ -93,7 +98,8 @@ export default function Index({placeHolderUri, category, productsPaginated, quer
                             />
                             <Pagination links={productsPaginated.meta.links} />
                         </div>
-                    </div> </div>
+                    </div>
+                </div>
             </div>
         </AuthenticatedLayout>
     );
@@ -128,7 +134,7 @@ function ProductRow({product, placeHolderUri}) {
     const productAttributes = product.attributes
         .sort((a,b) => a.name.localeCompare(b.name))
         .map((attribute) =>
-            <div key={attribute.name}>
+            <div>
                 <span className="font-bold">{attribute.name}:&nbsp;</span>
                 <span>{attribute.value}</span>
             </div>
@@ -163,7 +169,7 @@ function IntegerFilter({attribute, onAttributeFilterChange}) {
                 key="input"
                 className="w-full"
                 defaultValue={attribute.min}
-                onChange={e => onAttributeFilterChange(
+                onKeyUp={e => onAttributeFilterChange(
                     attribute.categoryAttributeId,
                     e.target.value,
                     true
@@ -176,7 +182,7 @@ function IntegerFilter({attribute, onAttributeFilterChange}) {
                 key="input"
                 className="w-full"
                 defaultValue={attribute.max}
-                onChange={e => onAttributeFilterChange(
+                onKeyUp={e => onAttributeFilterChange(
                     attribute.categoryAttributeId,
                     e.target.value,
                     false

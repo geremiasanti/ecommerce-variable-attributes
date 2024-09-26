@@ -99,6 +99,7 @@ class CategoryController extends Controller
 
         $productsQuery->orderBy('name');
         $productsPaginated = $productsQuery
+            ->orderBy('products.name')
             ->with('attributes')
             ->paginate(7)
             ->withQueryString();
