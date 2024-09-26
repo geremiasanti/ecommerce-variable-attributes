@@ -221,9 +221,13 @@ class CategoryController extends Controller
                         'intval',
                         ProductAttribute::query()
                             ->where('category_attribute_id', $categoryAttribute->id)
+                            ->whereNotNull('value')
                             ->pluck('value')
                             ->toArray()
                     );
+
+                    if(count($values) <= 0) continue;
+
                     $attributes[] = [
                         'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
                         'min' => min($values),
@@ -244,9 +248,13 @@ class CategoryController extends Controller
                         'floatval',
                         ProductAttribute::query()
                             ->where('category_attribute_id', $categoryAttribute->id)
+                            ->whereNotNull('value')
                             ->pluck('value')
                             ->toArray()
                     );
+
+                    if(count($values) <= 0) continue;
+
                     $attributes[] = [
                         'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
                         'min' => min($values),
