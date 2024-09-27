@@ -59,6 +59,13 @@ class ProductController extends Controller
             $productCreated->save();
         };
 
+        foreach(Category::find($data['category_id'])->attributes as $categoryAttribute) {
+            ProductAttribute::create([
+                'product_id' => $productCreated->id,
+                'category_attribute_id' => $data['category_id'],
+            ]);
+        }
+
         return to_route('products.index')
             ->with('success', "New Product \"$productCreated->name\" created");
     }

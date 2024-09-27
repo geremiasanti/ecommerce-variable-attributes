@@ -80,20 +80,13 @@ class CategoryController extends Controller
             $productsQuery->where('name', 'like', "%$nameFilter%");
         }
 
-        /*
-        $priceFilterMax = request('price_filter_mx');
-        if($priceFilterMax) {
-            $productsQuery->where('price', '<=', intVal($priceFilterMax));
-        }
-
-        $priceFilterMin = request('price_filter_mn');
-        if($priceFilterMin) {
-            $productsQuery->where('price', '>=', intVal($priceFilterMin));
-        }
-        */
-
         $filters = [];
         foreach(request()->query() as $key => $val) {
+            if(str_contains($key, '_in')) {
+                $values = is_null($val) ? [] :explode(',', $val);
+                list($categoryAttributeId, $_) = explode("_", $key, 2);
+                $filters[$categoryAttributeId]['in'] = $values;
+            }
             if(str_contains($key, '_min') || str_contains($key, '_max')) {
                 $val = intval($val);
                 list($categoryAttributeId, $minOrMax) = explode("_", $key, 2);
@@ -209,6 +202,27 @@ class CategoryController extends Controller
     {
         $attributes = [];
         foreach($categoryAttributes as $categoryAttribute) {
+            if($categoryAttribute->type->name == "String") {
+                $values = ProductAttribute::query()
+                    ->where('category_attribute_id', $categoryAttribute->id)
+                    ->groupBy('value')
+                    ->pluck('value')
+                    ->toArray();
+
+                    //if(self::allZeros($values)) continue;
+
+                $in = [];
+                if(array_key_exists($categoryAttribute->id, $filters)) {
+                    $in = $filters[$categoryAttribute->id]['in'];
+                }
+
+                $attributes[] = [
+                    'categoryAttribute' => new CategoryAttributeResource($categoryAttribute),
+                    'options' => $values,
+                    'in' => $in
+                ];
+            }
+
             if($categoryAttribute->type->name == "Integer") {
                 if(array_key_exists($categoryAttribute->id, $filters)) {
                     $attributes[] = [
@@ -270,10 +284,17 @@ class CategoryController extends Controller
             if(!array_key_exists($att['category_attribute_id'], $filters))
                 continue;
 
-            if(
-                $att['value'] > $filters[$att['category_attribute_id']]['max'] ||
-                $att['value'] < $filters[$att['category_attribute_id']]['min']
-            ) return false;
+            if(array_key_exists('in', $filters[$att['category_attribute_id']])) {
+                if(
+                    count($filters[$att['category_attribute_id']]['in']) > 0 &&
+                    !in_array($att['value'], $filters[$att['category_attribute_id']]['in'])
+                ) return false;
+            } else {
+                if(
+                    $att['value'] > $filters[$att['category_attribute_id']]['max'] ||
+                    $att['value'] < $filters[$att['category_attribute_id']]['min']
+                ) return false;
+            }
         }
         return true;
     }

@@ -12,7 +12,8 @@ export default function Index({placeHolderUri, category, products, queryParams, 
         type: attribute.categoryAttribute.data.type.name,
         min: attribute.min || null,
         max: attribute.max || null,
-        options: attribute.options ? attribute.options : null,
+        options: attribute.options || [],
+        in: attribute.in || [],
     }));
 
     const debounce = (callback, wait) => {
@@ -32,8 +33,12 @@ export default function Index({placeHolderUri, category, products, queryParams, 
         delete queryParams.attributes
 
         attributes.forEach((a) => {
-            queryParams[`${a.categoryAttributeId}_min`] = a.min;
-            queryParams[`${a.categoryAttributeId}_max`] = a.max;
+            if(a.options.length > 0) {
+                queryParams[`${a.categoryAttributeId}_in`] = a.in.join();
+            } else {
+                queryParams[`${a.categoryAttributeId}_min`] = a.min;
+                queryParams[`${a.categoryAttributeId}_max`] = a.max;
+            }
         })
 
         router.get(route('categories.show', category.data.id), queryParams, {
@@ -53,25 +58,47 @@ export default function Index({placeHolderUri, category, products, queryParams, 
         getWithFilters(queryParams);
     }
 
-    const attributeFilterInputChanged = debounce((categoryAttributeId, value, isMin = true) => {
-        if(!value) {
-            const categoryAttribute = attributes.find((att) =>
-                att.categoryAttribute.data.id == categoryAttributeId
-            )
-            value = isMin ? categoryAttribute.min : categoryAttribute.max;
+    const attributeFilterInputChanged = debounce((categoryAttributeId, value, type) => {
+        if(type === 'min' || type === 'max') {
+            if(!value) {
+                const categoryAttribute = attributes.find((att) =>
+                    att.categoryAttribute.data.id == categoryAttributeId
+                )
+                value = type === 'min' ? categoryAttribute.min : categoryAttribute.max;
+            }
+
+            queryParams.attributes.forEach((param) => {
+                if(param.categoryAttributeId === categoryAttributeId)
+                    if(type === 'min')
+                        param.min = value;
+                    else
+                        param.max = value;
+            });
         }
 
-        queryParams.attributes.forEach((param) => {
-            if(param.categoryAttributeId === categoryAttributeId)
-                if(isMin)
-                    param.min = value;
-                else
-                    param.max = value;
-        });
+        if(type === 'in') {
+            queryParams.attributes.forEach((param) => {
+                if(param.categoryAttributeId === categoryAttributeId) {
+                    if(value.checked) {
+                        param.in.push(value.id);
+                    } else {
+                        param.in = param.in.filter(item => item !== value.id);
+                    }
+                }
+            });
+        }
+
         getWithFilters(queryParams);
     }, 250);
 
     const filters = queryParams.attributes.map((attribute) => {
+        if(attribute.type === "String") {
+            return <StringFilter
+                key={attribute.categoryAttributeId}
+                onAttributeFilterChange={attributeFilterInputChanged}
+                attribute={attribute}
+            />
+        }
         if(attribute.type === "Integer" || attribute.type === "Decimal") {
             return <NumberFilter
                 key={attribute.categoryAttributeId}
@@ -168,7 +195,7 @@ function NumberFilter({attribute, onAttributeFilterChange}) {
         <div key="label" className="p-2 col-span-2">
             <span className="font-bold">{attribute.name}</span>
         </div>
-        <div key="min" className="px-1">
+        <div key="min" className="px-1 lg:p-2">
             <InputLabel key="label" value="Min" />
             <TextInput
                 key="input"
@@ -177,11 +204,11 @@ function NumberFilter({attribute, onAttributeFilterChange}) {
                 onKeyUp={e => onAttributeFilterChange(
                     attribute.categoryAttributeId,
                     e.target.value,
-                    true
+                    'min'
                 )}
             />
         </div>
-        <div key="max" className="px-1">
+        <div key="max" className="px-1 lg:p-2">
             <InputLabel key="label" value="Max" />
             <TextInput
                 key="input"
@@ -190,9 +217,34 @@ function NumberFilter({attribute, onAttributeFilterChange}) {
                 onKeyUp={e => onAttributeFilterChange(
                     attribute.categoryAttributeId,
                     e.target.value,
-                    false
+                    'max'
                 )}
             />
         </div>
     </>
 }
+
+function StringFilter({attribute, onAttributeFilterChange}) {
+    const options = attribute.options.map((option) =>
+        <div key={option}>
+            <input
+                type="checkbox"
+                id={option}
+                onClick={e => onAttributeFilterChange(
+                    attribute.categoryAttributeId,
+                    e.target,
+                    'in'
+                )}
+                defaultChecked={attribute.in.includes(option)}
+            />
+            <label htmlFor="scales" className="pl-1">{option}</label>
+        </div>
+    );
+    return <>
+        <div key="label" className="p-2 col-span-2">
+            <span className="font-bold">{attribute.name}</span>
+            {options}
+        </div>
+    </>
+}
+

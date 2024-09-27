@@ -21,7 +21,6 @@ export default function Create({categories}) {
             forceFormData: true
         });
     }
-    console.log(errors);
 
     const categoryOptions = [
         <option key="empty" value="" data-unit="0"></option>,

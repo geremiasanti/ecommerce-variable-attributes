@@ -78,7 +78,7 @@ class CategoryTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('categories.index'));
+            ->assertRedirect(route('categories.edit', 1));
 
         $this->assertSame(Category::count(), 1);
 
