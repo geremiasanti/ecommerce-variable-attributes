@@ -14,15 +14,17 @@ La sezione esplora permette, dopo aver scelto una categoria, di filtrarne i prod
 
 ## DB
 
+(Sono inclusi dei seeder che caricano dei dati generati, in parte casualmente. )
+
 Il Database ha 4 tabelle principali per gestire categorie, prodotti e attributi:
 
-- categories: Contiene le categorie.
+- **categories**: Contiene le categorie.
 
-- category_attributes: Contiene gli attributi delle categorie, con il riferimento alla relativa categoria e alla tipologia di attributo (dalla tabella category_attribute_types).
+- **category_attributes**: Contiene gli attributi delle categorie, con il riferimento alla relativa categoria e alla tipologia di attributo (dalla tabella category_attribute_types).
 
-- products: Contiene i prodotti, e il riferimento alla relativa categoria.
+- **products**: Contiene i prodotti, e il riferimento alla relativa categoria.
 
-- product_attributes: Contiene i valori di un prodotto per un determinato attributo della sua categoria. E' come se fosse un'istanza dell'attributo della categoria relativo a uno specifico prodotto.
+- **product_attributes**: Contiene i valori di un prodotto per un determinato attributo della sua categoria. E' come se fosse un'istanza dell'attributo della categoria relativo a uno specifico prodotto.
 
 - category_attribute_types, users, ...etc: tabelle secondarie
 
@@ -55,7 +57,7 @@ DB_DATABASE=<nome DB>
 DB_USERNAME=<nome utente con accesso al DB>
 DB_PASSWORD=<password utente>
 ```
-- `php artisan migrate:fresh --seed` (crea il DB e lo valorizza con dei dati, in parte generati casualmente)
+- `php artisan migrate:fresh --seed` (crea il DB e lo valorizza con dei dati, in parte generati casualmente, in particolare vengono creati attributi e prodotti per la categoria **Computers**)
 - `php storage link`
 - `npm install`
 
