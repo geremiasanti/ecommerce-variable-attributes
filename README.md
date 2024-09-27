@@ -48,7 +48,7 @@ Il Database ha 4 tabelle principali per gestire categorie, prodotti e attributi:
 - `composer install`
 - `artisan key:generate`
 - rinominare `.env.example` come `.env`
-- create il database e valorizzare i campi relativi al DB all'interno del file `.env`:
+- creare il database e valorizzare i campi relativi al DB all'interno del file `.env`:
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
