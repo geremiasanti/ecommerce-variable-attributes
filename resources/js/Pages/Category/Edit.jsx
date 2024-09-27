@@ -222,7 +222,6 @@ function CreateAttributeRow({typeOptions, categoryId}) {
         if(parseInt(select.options[select.selectedIndex].dataset.unit)) {
             unitField.classList.remove('hidden')
         } else {
-            setData('unit', '')
             unitField.classList.add('hidden')
         }
     }

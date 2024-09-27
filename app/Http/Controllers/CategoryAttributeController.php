@@ -11,6 +11,10 @@ class CategoryAttributeController extends Controller
     public function store(StoreCategoryAttributeRequest $request)
     {
         $validated = $request->validated();
+        if($validated['type_id'] == 3) {
+            unset($validated['unit']);
+        }
+
         $createdAttribute = CategoryAttribute::create($validated);
 
         foreach($createdAttribute->category->products as $product) {
