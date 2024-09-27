@@ -93,7 +93,6 @@ class CategoryController extends Controller
                 $filters[$categoryAttributeId][$minOrMax] = $val;
             }
         }
-        \Log::debug(print_r($filters, true));
 
         $products = $productsQuery->get();
         foreach($products as $product) {
