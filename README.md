@@ -4,7 +4,7 @@
 
 ## Panoramica dell'applicazione
 
-Si tratta di una SPA, creata con Laravel e React (connessi tramite Inertia.js), la quale utilizza un database Mysql.
+Si tratta di una SPA, creata con Laravel e React (connessi tramite Inertia.js), la quale utilizza un database Mysql. Sono anche presenti i test di alcune feature (eseguiti tramite PHPUnit).
 
 Un prodotto appartiene a una determinata categoria. Ogni categoria ha dei propri attributi i quali possono essere definiti nella pagina di modifica della categoria, mediante tipologia, nome e unita' di misura. Attualmente ma le tipologie sono 3: Intero, decimale e stringa.
 
@@ -28,4 +28,40 @@ Il Database ha 4 tabelle principali per gestire categorie, prodotti e attributi:
 
 ## Dipendenze
 
+(Queste sono le dipendenze per lo sviluppo su Ubuntu 24, in caso di sviluppo su window consiglio di usare XAMPP o comunque seguire una guida)
+
+- apache2: server version Apache/2.4.58 (Ubuntu)
+- php: v. 8.3.11
+- composer: v. 2.7.9
+- mysql: v. 8.0.39-0ubuntu0.24.04.2 for Linux on x86_6
+- npm: v. 9.2.0
+- drivers php-database
+	- php8.3-mysql
+	- php8.3-sqlite3 (DB in-memory per i test, opzionale)
+
 ## Setup
+
+- clonare il repository
+- entrare nella cartella del progetto (quella contente "artisan")
+- `composer install`
+- `artisan key:generate`
+- rinominare `.env.example` come `.env`
+- create il database e valorizzare i campi relativi al DB all'interno del file `env`:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=<nome DB>
+DB_USERNAME=<utente con accesso al DB>
+DB_PASSWORD=<password utente>
+```
+- `php artisan migrate:fresh --seed` (crea il DB e lo valorizza con dei dati, in parte generati casualmente)
+- `php storage link`
+- `npm install`
+
+## Esecuzione server locale
+
+Per eseguire il server in locale serve eseguire in parallelo:
+- `php artisan serve`
+- `npm run dev`
+Il sito sara' presente all'indirizzo mostrato in seguito all'esecuzione del comando "serve" di artisan.
