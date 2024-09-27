@@ -58,7 +58,7 @@ DB_USERNAME=<nome utente con accesso al DB>
 DB_PASSWORD=<password utente>
 ```
 - `php artisan migrate:fresh --seed` (crea il DB e lo valorizza con dei dati, in parte generati casualmente, in particolare vengono creati attributi e prodotti per la categoria **Computers**)
-- `php storage link`
+- `php storage:link`
 - `npm install`
 
 ## Esecuzione server locale
