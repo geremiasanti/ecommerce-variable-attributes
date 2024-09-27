@@ -205,6 +205,7 @@ class CategoryController extends Controller
             if($categoryAttribute->type->name == "String") {
                 $values = ProductAttribute::query()
                     ->where('category_attribute_id', $categoryAttribute->id)
+                    ->whereNotNull('value')
                     ->groupBy('value')
                     ->pluck('value')
                     ->toArray();
