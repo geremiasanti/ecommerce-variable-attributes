@@ -1,5 +1,7 @@
 # Ecommerce con attributi variabili
 
+[demo.webm](https://github.com/user-attachments/assets/8a3bc675-5566-4e81-b3fa-14757edb67e4)
+
 ## Panoramica dell'applicazione
 
 Si tratta di una SPA, creata con Laravel e React (connessi tramite Inertia.js), la quale utilizza un database Mysql.
