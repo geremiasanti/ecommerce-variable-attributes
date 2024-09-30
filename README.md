@@ -68,3 +68,9 @@ Per eseguire il server in locale serve eseguire in parallelo:
 - `npm run dev`
 
 Il sito sara' presente all'indirizzo mostrato in seguito all'esecuzione del comando "serve" di artisan.
+
+Si puo' accedere con l'utente creato dal seeder avente le seguenti credenziali:
+```
+email: user0@example.com
+password: password0
+```
